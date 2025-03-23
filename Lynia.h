@@ -2898,8 +2898,9 @@ namespace MyTools
 			/* 可再添些变量，比如 区间查询问题用到的 边归属：int id； */
 		};
 
-		// N：总共 N 个数
+		// N = n * MAX, n 个数 * MAX 最大二进制位数
 		unique_ptr<array<TrieNode, N>> t;
+		array<TrieNode, N>& tr = *t;
 
 		int newNode() { return ++nodeCnt; }
 
@@ -2907,18 +2908,18 @@ namespace MyTools
 		int root = 1;
 		int nodeCnt = 1;
 	public:
-		Trie01(int MAX) :MAX(MAX), t(make_unique<array<TrieNode, N* MAX>>()) {}
+		Trie01(int MAX) :MAX(MAX), t(make_unique<array<TrieNode, N>>()) {}
 
 		void insert(T num) {
 			int now = root;
 			// 枚举二进制数位
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1; // 当前数位
-				if (not (*t)[now].children[bit]) {
+				if (not tr[now].children[bit]) {
 					// 没有对应数位的边，则自己造边
-					(*t)[now].children[bit] = newNode();
+					tr[now].children[bit] = newNode();
 				}
-				now = (*t)[now].children[bit];
+				now = tr[now].children[bit];
 			}
 		}
 
@@ -2929,13 +2930,13 @@ namespace MyTools
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1;
 				// 尽量选与自己相反的，从而进 1
-				if ((*t)[now].children[!bit]) {
+				if (tr[now].children[!bit]) {
 					maxXor |= (1ll << i);
-					now = (*t)[now].children[!bit];
+					now = tr[now].children[!bit];
 				}
 				else {
 					// 没有的话只能乖乖往下走，这一位变 0
-					now = (*t)[now].children[bit];
+					now = tr[now].children[bit];
 				}
 			}
 			return maxXor;
@@ -2947,12 +2948,12 @@ namespace MyTools
 			T minXor = 0;
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1;
-				if ((*t)[now].children[bit]) {
-					now = (*t)[now].children[bit];
+				if (tr[now].children[bit]) {
+					now = tr[now].children[bit];
 				}
 				else {
 					minXor |= (1ll << i);
-					now = (*t)[now].children[bit];
+					now = tr[now].children[bit];
 				}
 			}
 			return minXor;
