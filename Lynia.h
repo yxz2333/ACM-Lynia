@@ -2885,52 +2885,51 @@ namespace MyTools
 
 
 	template <typename T>
-	class Trie01Map {
+	class Trie01Vector {
 	private:
 		struct TrieNode {
-			HashMap<int, shared_ptr<TrieNode>>children; // 指向孩子的 id
+			array<int, 2> children; // 指向孩子的 id
 			/* 可再添些变量，比如 区间查询问题用到的 边归属：int id； */
 			/* 本板子可以进行区间询问，添加 边归属：int id；后，修改插入和询问函数即可。  */
 		};
 
-		unique_ptr<TrieNode> newNode() {
-			nodeCnt++;
-			return make_unique<TrieNode>();
-		}
+		vector<TrieNode> tr;
+		int newNode() { tr.push_back(TrieNode()); return ++nodeCnt; }
 
 		int MAX; 	      // MAX：数的最大二进制位数
-		shared_ptr<TrieNode> root;
-		int nodeCnt = 0;
+		int root = 1;
+		int nodeCnt = 1;
 	public:
-		Trie01Map(int MAX) :MAX(MAX), root(newNode()) {}
+		Trie01Vector(int MAX) :MAX(MAX), tr(2) {}
 
 		void insert(T num) {
-			auto now = root;
+			int now = root;
 			// 枚举二进制数位
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1; // 当前数位
-				if (not now->children[bit]) {
+				if (not tr[now].children[bit]) {
 					// 没有对应数位的边，则自己造边
-					now->children[bit] = newNode();
+					int tmp = newNode();
+					tr[now].children[bit] = tmp;
 				}
-				now = now->children[bit];
+				now = tr[now].children[bit];
 			}
 		}
 
 		// 看看 num 跟 01 trie 里的哪个元素 XOR 最后的值最大
 		T find_max_xor(T num) {
-			auto now = root;
+			int now = root;
 			T maxXor = 0;
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1;
 				// 尽量选与自己相反的，从而进 1
-				if (now->children[!bit]) {
+				if (tr[now].children[!bit]) {
 					maxXor |= (1ll << i);
-					now = now->children[!bit];
+					now = tr[now].children[!bit];
 				}
 				else {
 					// 没有的话只能乖乖往下走，这一位变 0
-					now = now->children[bit];
+					now = tr[now].children[bit];
 				}
 			}
 			return maxXor;
@@ -2942,18 +2941,17 @@ namespace MyTools
 			T minXor = 0;
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1;
-				if (now->children[bit]) {
-					now = now->children[bit];
+				if (tr[now].children[bit]) {
+					now = tr[now].children[bit];
 				}
 				else {
 					minXor |= (1ll << i);
-					now = now->children[bit];
+					now = tr[now].children[bit];
 				}
 			}
 			return minXor;
 		}
 	};
-
 
 	template <typename T, size_t N>
 	class Trie01Array {
