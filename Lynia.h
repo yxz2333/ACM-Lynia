@@ -278,12 +278,7 @@ namespace MyTools
 		int cnt = 0;
 		vector<int> prime;
 
-		EulerPrime(int n)
-		{
-			prime.assign(n + 1, 0);
-			vis.assign(n + 1, 0);
-			init(n);
-		}
+		EulerPrime(int n) : vis(n + 1) { init(n); }
 
 		bool isPrime(int n)
 		{
@@ -331,8 +326,10 @@ namespace MyTools
 		{
 			for (int i = 2; i <= n; i++)
 			{
-				if (!vis[i])
-					prime[cnt++] = i;
+				if (!vis[i]) {
+					prime.push_back(i);
+					cnt++;
+				}
 				for (int j = 0; j < cnt && i * prime[j] <= n; j++)
 				{
 					vis[i * prime[j]] = 1; // 用最小质因数筛去
@@ -1942,7 +1939,7 @@ namespace MyTools
 		* 有时会输出 -0，为正常现象，有必要可以特判掉。
 		*/
 
-		const double eps = 1e-9;
+		const double eps = 1e-6;
 		const double PI = acos(-1.0);
 
 		template<typename T>
@@ -1993,7 +1990,7 @@ namespace MyTools
 				return res;
 			}
 
-			double len() const { return sqrt(len2()); } // 向量长度
+			double len() const { return sqrt((*this) * (*this)); } // 向量长度
 			T len2() const { return (*this) * (*this); } // 向量长度的平方
 
 			int quadrant() {
@@ -2096,7 +2093,7 @@ namespace MyTools
 				T ans = 0;
 				int n = this->size();
 				for (int i = 0; i < n; i++)
-					ans += dist((*this)[i], (*this)[(i + 1) % n]);
+					ans += point_point_dist((*this)[i], (*this)[(i + 1) % n]);
 				return ans;
 			}
 
@@ -2111,8 +2108,8 @@ namespace MyTools
 			}
 
 			// 多边形的面积 * 2
-			ll Area2() {
-				ll area = 0;
+			long long Area2() {
+				long long area = 0;
 				int n = this->size();
 				for (int i = 0; i < n; i++) {
 					area += cross((*this)[i], (*this)[(i + 1) % n]);
@@ -2173,7 +2170,7 @@ namespace MyTools
 
 
 		template<typename T>
-		double dist(const Point<T>& A, const Point<T>& B) {
+		double point_point_dist(const Point<T>& A, const Point<T>& B) {
 			/**
 			* 两点距离
 			*/
@@ -2181,7 +2178,7 @@ namespace MyTools
 		}
 
 		template<typename T>
-		ll dist2(const Point<T>& A, const Point<T>& B) {
+		long long point_point_dist2(const Point<T>& A, const Point<T>& B) {
 			/**
 			* 两点距离的平方
 			*/
@@ -2207,8 +2204,15 @@ namespace MyTools
 			return A.x * B.y - A.y * B.x;
 		}
 
+		Point<db> angle_to_point(const db& ang) {
+			/**
+			* 极角变单位坐标
+			*/
+			return { cos(ang), sin(ang) };
+		}
+
 		template<typename T>
-		double len(const Vector<T>& A) {
+		double vector_len(const Vector<T>& A) {
 			/**
 			* 向量长度
 			*/
@@ -2216,7 +2220,7 @@ namespace MyTools
 		}
 
 		template<typename T>
-		T len2(const Vector<T>& A) {
+		T vector_len2(const Vector<T>& A) {
 			/**
 			* 向量长度的平方
 			*/
@@ -2224,18 +2228,31 @@ namespace MyTools
 		}
 
 		template<typename T>
-		double angle(const Vector<T>& A, const Vector<T>& B) {
+		double vector_vector_angle(const Vector<T>& A, const Vector<T>& B) {
 			/**
 			* 两向量夹角 (弧度制)
 			*/
-			return acos(dot(A, B) / len(A) / len(B));
+			return acos((double)dot(A, B) / vector_len(A) / vector_len(B));
 		}
 
-		Point<db> angle_to_point(const db& ang) {
+		template<typename T>
+		Vector<T> vector_rotate(const Vector<T>& A, double rad) {
 			/**
-			* 极角变单位坐标
+			* 向量旋转 (弧度制)
+			* 特殊情况是旋转90度：
+			* 逆时针旋转90度：Rotate(A, pi/2)，返回Vector(-A.y, A.x)；
+			* 顺时针旋转90度：Rotate(A, -pi/2)，返回Vector(A.y, - A.x)。
 			*/
-			return { cos(ang), sin(ang) };
+			return Vector<T>(A.x * cos(rad) - A.y * sin(rad), A.x * sin(rad) + A.y * cos(rad));
+		}
+
+		template<typename T>
+		Vector<T> vector_normal(const Vector<T>& A) {
+			/**
+			* 单位法向量
+			* 有时需要求单位法向量，即逆时针转90度，然后取单位值。
+			*/
+			return Vector<T>(-A.y / vector_len(A), A.x / vector_len(A));
 		}
 
 		template<typename T>
@@ -2259,7 +2276,7 @@ namespace MyTools
 		}
 
 		template<typename T>
-		T area_triangle(const Point<T>& A, const Point<T>& B, const Point<T>& C) {
+		double area_triangle(const Point<T>& A, const Point<T>& B, const Point<T>& C) {
 			/**
 			* 计算两向量构成的三角形有向面积
 			* 三个点A、B、C，以 A 为公共点，得到 2 个向量 AB 和 AC，它们构成的三角形
@@ -2268,9 +2285,8 @@ namespace MyTools
 			return cross(B - A, C - A) / 2.0;
 		}
 
-
 		template<typename T>
-		T area_triangle(const Vector<T>& A, const Vector<T>& B) {
+		double area_triangle(const Vector<T>& A, const Vector<T>& B) {
 			/**
 			* 计算两向量构成的三角形有向面积
 			* 两个有公共点的向量 A B 构成的三角形
@@ -2279,34 +2295,51 @@ namespace MyTools
 			return cross(A, B) / 2.0;
 		}
 
-
-		template<typename T>
-		Vector<T> rotate(const Vector<T>& A, double rad) {
-			/**
-			* 向量旋转 (弧度制)
-			* 特殊情况是旋转90度：
-			* 逆时针旋转90度：Rotate(A, pi/2)，返回Vector(-A.y, A.x)；
-			* 顺时针旋转90度：Rotate(A, -pi/2)，返回Vector(A.y, - A.x)。
-			*/
-			return Vector<T>(A.x * cos(rad) - A.y * sin(rad), A.x * sin(rad) + A.y * cos(rad));
-		}
-
-
-		template<typename T>
-		Vector<T> normal(const Vector<T>& A) {
-			/**
-			* 单位法向量
-			* 有时需要求单位法向量，即逆时针转90度，然后取单位值。
-			*/
-			return Vector<T>(-A.y / len(A), A.x / len(A));
-		}
-
 		template<typename T>
 		bool vector_vector_parallel(const Vector<T>& A, const Vector<T>& B) {
 			/**
 			* 两个向量是否平行或重合
 			*/
 			return sgn(cross(A, B)) == 0;
+		}
+
+		template<typename T>
+		int vector_vector_relation(const Vector<T>& v1, const Vector<T>& v2) {
+			/**
+			* 两向量的位置关系
+			* 返回值：
+			*	0：v1 与 v2 共线
+			*	1：v2 在 v1 的逆时针方向
+			*	2：v2 在 v1 的顺时针方向
+			*/
+
+			int sign = sgn(cross(v1, v2));
+			if (sign == 0)return 0;
+			if (sign > 0)return 1;
+			if (sign < 0)return 2;
+		}
+
+		template<typename T>
+		int vector_vector_angle_type(const Vector<T>& v1, const Vector<T>& v2) {
+			/**
+			* 两向量夹角类型
+			* 返回值：
+			*	0：夹角度为 0
+			*	1：夹角为锐角
+			*	2：夹角为钝角
+			*	3：夹角为平角，即方向相反
+			*/
+
+			var _dot = dot(v1, v2);
+			if (vector_vector_relation(v1, v2) == 0) {
+				// 两向量共线
+				if (sgn(_dot) > 0)return 0;
+				else return 3;
+			}
+			else {
+				if (sgn(_dot) > 0)return 1;
+				else return 2;
+			}
 		}
 
 		template<typename T>
@@ -2347,7 +2380,7 @@ namespace MyTools
 			* 实际上是算了 p 和 v 的一个端点连边，然后和 v 形成的平行四边形的面积，除底得到
 			*/
 
-			return fabs(cross(p - v.p1, v.p2 - v.p1)) / dist(v.p1, v.p2);
+			return fabs(cross(p - v.p1, v.p2 - v.p1)) / point_point_dist(v.p1, v.p2);
 		}
 
 		template<typename T>
@@ -2356,7 +2389,7 @@ namespace MyTools
 			* 点在直线上的投影点
 			*/
 
-			double k = dot(v.p2 - v.p1, p - v.p1) / len2(v.p2 - v.p1);
+			double k = dot(v.p2 - v.p1, p - v.p1) / vector_len2(v.p2 - v.p1);
 			return v.p1 + (v.p2 - v.p1) * k;
 		}
 
@@ -2380,24 +2413,8 @@ namespace MyTools
 			*/
 
 			if (sgn(dot(p - v.p1, v.p2 - v.p1)) < 0 || sgn(dot(p - v.p2, v.p1 - v.p2)) < 0)
-				return min(dist(p, v.p1), dist(p, v.p2));
+				return min(point_point_dist(p, v.p1), point_point_dist(p, v.p2));
 			return point_line_dis(p, v);
-		}
-
-		template<typename T>
-		int vector_vector_relation(const Vector<T>& v1, const Vector<T>& v2) {
-			/**
-			* 两向量的位置关系
-			* 返回值：
-			*	0：v1 与 v2 共线
-			*	1：v2 在 v1 的逆时针方向
-			*	2：v2 在 v1 的顺时针方向
-			*/
-
-			int sign = sgn(cross(v1, v2));
-			if (sign == 0)return 0;
-			if (sign > 0)return 1;
-			if (sign < 0)return 2;
 		}
 
 		template<typename T>
@@ -2415,29 +2432,6 @@ namespace MyTools
 				else return 0;
 			}
 			return 2;
-		}
-
-		template<typename T>
-		int vector_vector_angle_type(const Vector<T>& v1, const Vector<T>& v2) {
-			/**
-			* 两向量夹角类型
-			* 返回值：
-			*	0：夹角度为 0
-			*	1：夹角为锐角
-			*	2：夹角为钝角
-			*	3：夹角为平角，即方向相反
-			*/
-
-			var _dot = dot(v1, v2);
-			if (vector_vector_relation(v1, v2) == 0) {
-				// 两向量共线
-				if (sgn(_dot) > 0)return 0;
-				else return 3;
-			}
-			else {
-				if (sgn(_dot) > 0)return 1;
-				else return 2;
-			}
 		}
 
 		template<typename T>
@@ -2544,7 +2538,7 @@ namespace MyTools
 			double ans = 0;
 			int n = p.size();
 			for (int i = 0; i < n; i++)
-				ans += dist(p[i], p[(i + 1) % n]);
+				ans += point_point_dist(p[i], p[(i + 1) % n]);
 			return ans;
 		}
 
@@ -2634,7 +2628,7 @@ namespace MyTools
 			*	2: 点在圆外
 			*/
 
-			double dst = dist(p, C.c);
+			double dst = point_point_dist(p, C.c);
 			if (sgn(dst - C.r) < 0) return 0;
 			if (sgn(dst - C.r) == 0) return 1;
 			return 2;
@@ -2689,7 +2683,7 @@ namespace MyTools
 				se.push_back(q);
 				return se;
 			}
-			Point<T> n = (v.p2 - v.p1) / len(v.p2 - v.p1);     // 单位向量
+			Point<T> n = (v.p2 - v.p1) / vector_len(v.p2 - v.p1);     // 单位向量
 			se.push_back(q + n * k);
 			se.push_back(q - n * k);
 			return se;                                         // 2个交点
@@ -2786,13 +2780,13 @@ namespace MyTools
 					abs(area_parallelogram(p[(i + 1) % n], p[i], p[j]))) {
 					j = (j + 1) % n;
 				}
-				db d1 = dist(p[i], p[j]);
+				db d1 = point_point_dist(p[i], p[j]);
 				if (d1 > mx) {
 					mx = d1;
 					a = p[i];
 					b = p[j];
 				}
-				db d2 = dist(p[(i + 1) % n], p[j]);
+				db d2 = point_point_dist(p[(i + 1) % n], p[j]);
 				if (d2 > mx) {
 					mx = d2;
 					a = p[(i + 1) % n];
@@ -2804,14 +2798,14 @@ namespace MyTools
 
 
 		template<typename T>
-		ll farthest_point_to_point_dis2(const Polygon<T>& p, Point<T>& a, Point<T>& b) {
+		long long farthest_point_to_point_dis2(const Polygon<T>& p, Point<T>& a, Point<T>& b) {
 			/**
 			* 旋转卡壳求最远点对及其距离
 			* p 为凸包，ab 为最远点对
 			* 返回值为最远点对的距离
 			*/
 
-			ll mx = 0;
+			long long mx = 0;
 			int n = p.size();
 			// 经典单调性，双指针枚举即可
 			int j = 1;
@@ -2821,13 +2815,13 @@ namespace MyTools
 					abs(area_parallelogram(p[(i + 1) % n], p[i], p[j]))) {
 					j = (j + 1) % n;
 				}
-				ll d1 = dist2(p[i], p[j]);
+				long long d1 = point_point_dist2(p[i], p[j]);
 				if (d1 > mx) {
 					mx = d1;
 					a = p[i];
 					b = p[j];
 				}
-				ll d2 = dist2(p[(i + 1) % n], p[j]);
+				long long d2 = point_point_dist2(p[(i + 1) % n], p[j]);
 				if (d2 > mx) {
 					mx = d2;
 					a = p[(i + 1) % n];
@@ -2855,8 +2849,8 @@ namespace MyTools
 					abs(area_parallelogram(p[(i + 1) % n], p[i], p[j]))) {
 					j = (j + 1) % n;
 				}
-				db d1 = dist(p[i], p[j]);
-				db d2 = dist(p[(i + 1) % n], p[j]);
+				db d1 = point_point_dist(p[i], p[j]);
+				db d2 = point_point_dist(p[(i + 1) % n], p[j]);
 				mx = max({ d1, d2, mx });
 			}
 			return mx;
@@ -2864,14 +2858,14 @@ namespace MyTools
 
 
 		template<typename T>
-		ll farthest_point_to_point_dis2(const Polygon<T>& p) {
+		long long farthest_point_to_point_dis2(const Polygon<T>& p) {
 			/**
 			* 旋转卡壳求最远点对及其距离
 			* p 为凸包，ab 为最远点对
 			* 返回值为最远点对的距离
 			*/
 
-			ll mx = 0;
+			long long mx = 0;
 			int n = p.size();
 			// 经典单调性，双指针枚举即可
 			int j = 1;
@@ -2881,8 +2875,8 @@ namespace MyTools
 					abs(area_parallelogram(p[(i + 1) % n], p[i], p[j]))) {
 					j = (j + 1) % n;
 				}
-				ll d1 = dist2(p[i], p[j]);
-				ll d2 = dist2(p[(i + 1) % n], p[j]);
+				long long d1 = point_point_dist2(p[i], p[j]);
+				long long d2 = point_point_dist2(p[(i + 1) % n], p[j]);
 				mx = max({ d1, d2, mx });
 			}
 			return mx;
@@ -2890,12 +2884,84 @@ namespace MyTools
 	}
 
 
+	template <typename T>
+	class Trie01Map {
+	private:
+		struct TrieNode {
+			HashMap<int, shared_ptr<TrieNode>>children; // 指向孩子的 id
+			/* 可再添些变量，比如 区间查询问题用到的 边归属：int id； */
+			/* 本板子可以进行区间询问，添加 边归属：int id；后，修改插入和询问函数即可。  */
+		};
+
+		unique_ptr<TrieNode> newNode() {
+			nodeCnt++;
+			return make_unique<TrieNode>();
+		}
+
+		int MAX; 	      // MAX：数的最大二进制位数
+		shared_ptr<TrieNode> root;
+		int nodeCnt = 0;
+	public:
+		Trie01Map(int MAX) :MAX(MAX), root(newNode()) {}
+
+		void insert(T num) {
+			auto now = root;
+			// 枚举二进制数位
+			for (int i = MAX; i >= 0; i--) {
+				bool bit = (num >> i) & 1; // 当前数位
+				if (not now->children[bit]) {
+					// 没有对应数位的边，则自己造边
+					now->children[bit] = newNode();
+				}
+				now = now->children[bit];
+			}
+		}
+
+		// 看看 num 跟 01 trie 里的哪个元素 XOR 最后的值最大
+		T find_max_xor(T num) {
+			auto now = root;
+			T maxXor = 0;
+			for (int i = MAX; i >= 0; i--) {
+				bool bit = (num >> i) & 1;
+				// 尽量选与自己相反的，从而进 1
+				if (now->children[!bit]) {
+					maxXor |= (1ll << i);
+					now = now->children[!bit];
+				}
+				else {
+					// 没有的话只能乖乖往下走，这一位变 0
+					now = now->children[bit];
+				}
+			}
+			return maxXor;
+		}
+
+		// 看看 num 跟 01 trie 里的哪个元素 XOR 最后的值最小
+		T find_min_xor(T num) {
+			auto now = root;
+			T minXor = 0;
+			for (int i = MAX; i >= 0; i--) {
+				bool bit = (num >> i) & 1;
+				if (now->children[bit]) {
+					now = now->children[bit];
+				}
+				else {
+					minXor |= (1ll << i);
+					now = now->children[bit];
+				}
+			}
+			return minXor;
+		}
+	};
+
+
 	template <typename T, size_t N>
-	class Trie01 {
+	class Trie01Array {
 	private:
 		struct TrieNode {
 			array<int, 2> children; // 指向孩子的 id
 			/* 可再添些变量，比如 区间查询问题用到的 边归属：int id； */
+			/* 本板子可以进行区间询问，添加 边归属：int id；后，修改插入和询问函数即可。  */
 		};
 
 		// N = n * MAX, n 个数 * MAX 最大二进制位数
@@ -2908,7 +2974,7 @@ namespace MyTools
 		int root = 1;
 		int nodeCnt = 1;
 	public:
-		Trie01(int MAX) :MAX(MAX), t(make_unique<array<TrieNode, N>>()) {}
+		Trie01Array(int MAX) :MAX(MAX), t(make_unique<array<TrieNode, N>>()) {}
 
 		void insert(T num) {
 			int now = root;
@@ -3066,6 +3132,7 @@ using Math = MT::Math<ll>;
 //using mint = MT::ModInt<998244353>;
 
 /*
+// 懒标记线段树
 struct Tag {
 	Tag() {}
 	// is_init(0)
@@ -3099,7 +3166,7 @@ Info operator+(const Info& a, const Info& b) {
 	return c;
 }
 
-
+// 线段树
 struct Info {
 	Info() {};
 
