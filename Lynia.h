@@ -3159,6 +3159,11 @@ struct Info {
 
 		}
 	}
+
+	void apply(const Info& v) {
+		// 如何单点修改
+
+	}
 };
 Info operator+(const Info& a, const Info& b) {
 	Info c;
