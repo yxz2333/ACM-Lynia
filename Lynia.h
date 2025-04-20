@@ -567,7 +567,8 @@ namespace MyTools
 		{ // 单点修改
 			if (pl == pr)
 			{
-				info[p] = v;
+				// info[p] = v;
+				info[p].apply(v);
 				return;
 			}
 			int mid = pl + pr >> 1;
@@ -3112,15 +3113,15 @@ namespace MyTools
 				root[i] = i;
 		}
 
-			int find(int x) {
-				if (root[x] != x)return root[x] = find(root[x]);
-				return root[x];
-			}
+		int find(int x) {
+			if (root[x] != x)return root[x] = find(root[x]);
+			return root[x];
+		}
 
-			// 前者为根，后者为子
-			void uoion(int x, int y) {
-				uoion_func(x, y, *this);
-			}
+		// 前者为根，后者为子
+		void uoion(int x, int y) {
+			uoion_func(x, y, *this);
+		}
 	};
 
 }
