@@ -1707,7 +1707,7 @@ namespace MyTools
 		int tot = 0;    // 记录节点个数，并作为版本编号
 		vector<tree>t;  // 存树各个的节点 
 		int len;        // 离散化后的数的个数\
-				也是值域大小 (可不开离散化，纯靠动态开点即可)
+								也是值域大小 (可不开离散化，纯靠动态开点即可)
 
 		int build(int l, int r) { // 初始化建树
 			int node = ++tot;
@@ -1823,7 +1823,7 @@ namespace MyTools
 
 		ll query_bigger_num(int L, int R, ll k) {
 			/**
-			* 双版本差分查询区间值域大于 k 的数的总数 sum
+			* 双版本差分查询区间值域大于等于 k 的数的总数 sum
 			* L, R 为线段树版本，要传入 L - 1
 			* 离散化：k 是要找的特定数在离散化数组中的下标，即 k = find(x)
 			* 非离散化：k 就是要查的特定数，即 k = x
@@ -1843,7 +1843,7 @@ namespace MyTools
 
 		ll query_smaller_num(int L, int R, ll k) {
 			/**
-			* 双版本差分查询区间值域小于 k 的数的总数 sum
+			* 双版本差分查询区间值域小于等于 k 的数的总数 sum
 			* L, R 为线段树版本，要传入 L - 1
 			* 离散化：k 是要找的特定数在离散化数组中的下标，即 k = find(x)
 			* 非离散化：k 就是要查的特定数，即 k = x
