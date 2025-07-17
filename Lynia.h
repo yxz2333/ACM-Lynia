@@ -138,7 +138,7 @@ namespace MyTools
 				while (m % i == 0)
 				{
 					m /= i;
-					mp[i]++;
+					mp[i]++; // 注意避免 mp 无必要的使用
 				}
 			}
 			if (m > 1)
@@ -170,23 +170,29 @@ namespace MyTools
 			}
 			return ans;
 		}
-		string decimalToBinary(int n, bool flag = 0)
-		{ // flag是否返回倒转 如4:100 4:001
-			if (n == 0)
-				return "0";
-			string binaryNumber = "";
-			while (n > 0)
-			{
-				binaryNumber = to_string(n % 2) + binaryNumber;
-				n /= 2;
+		static string decimalChange(ll x, ll num) {
+			if (num <= 1 or num >= 10)static_assert("位数错误");
+			string ans;
+			ll now = 63;
+			bool zero = 1;
+			while (now >= 0) {
+				ll base = 1;
+				bool ok = 0;
+				fa(i, 1, now) {
+					base *= num;
+					if (x < base) {
+						ok = 1;
+						break;
+					}
+				}
+				now--;
+				if (ok and zero)continue;
+				zero = 0;
+
+				ans.pb(char(x / base + '0'));
+				x %= base;
 			}
-			if (!flag)
-				return binaryNumber;
-			else
-			{
-				reverse(binaryNumber.begin(), binaryNumber.end());
-				return binaryNumber;
-			}
+			return ans;
 		}
 		static vector<T> division_block(T x) {
 			// 整除分块，找到 k 为何值时，x / k 会改变，O(根号x)
@@ -198,6 +204,16 @@ namespace MyTools
 				r = x / (x / l);
 			}
 			return res;
+		}
+		static ll prefixSumFactorNumber(ll x) {
+			// 求 [1, x] 所有数的因数个数的总和，O(根号x)
+			// sum{ factorNumber(i) } = sum{ x / i }
+			// 注意：太大会爆 ll
+			var tmp = division_block(x);
+			tmp.pb(x + 1);
+			ll sum = 0;
+			fa(i, 1, tmp.size() - 1)sum += (tmp[i] - tmp[i - 1]) * (x / tmp[i - 1]);
+			return sum;
 		}
 	};
 
@@ -255,6 +271,8 @@ namespace MyTools
 
 	/**
 	* - 质数倍数枚举优化dp     -- O(loglogN)
+	* - 优化依赖 Math::factorALL 原理的 dp
+	* 
 	*	《2020ICPC·小米 网络选拔赛第一场 A》
 	*	fa(i, 1, N) {
 	*		dp[i] += mp[i];
@@ -318,6 +336,23 @@ namespace MyTools
 			if (m > 1)
 				se.push_back(m);
 			return se;
+		}
+
+		int segmentSieve(ll l, ll r) {
+			// 区间筛，算 [l, r] 里的质数个数，复杂度 O(n)
+
+			var is_prime = vector<bool>(r - l + 1);
+			int ans = 0;
+
+			for (ll p : prime) {
+				// 区间筛，枚举 p 的倍数即合数，把区间内合数全部筛去
+				for (ll j = p * max(2ll, (l + p - 1) / p); j <= r; j += p) {
+					is_prime[j - l] = 0;
+				}
+			}
+
+			fa(i, 0, r - l)if (is_prime[i])ans++;
+			return ans;
 		}
 
 	private:
@@ -1936,11 +1971,7 @@ namespace MyTools
 
 
 	namespace Geo {
-		/**
-		* 有时会输出 -0，为正常现象，有必要可以特判掉。
-		*/
-
-		const double eps = 1e-6;
+		const double eps = 1e-9;
 		const double PI = acos(-1.0);
 
 		template<typename T>
@@ -2233,7 +2264,26 @@ namespace MyTools
 			/**
 			* 两向量夹角 (弧度制)
 			*/
-			return acos((double)dot(A, B) / vector_len(A) / vector_len(B));
+			double tt = (double)dot(A, B) / vector_len(A) / vector_len(B);
+			if (tt < -1.0)
+				tt = -1.0;
+			if (tt > 1.0)
+				tt = 1.0;
+			return acos(tt);
+		}
+
+
+		template<typename T>
+		double vector_vector_angle_directed(const Vector<T>& A, const Vector<T>& B) {
+			/**
+			* 两向量夹角 (弧度制)
+			* 带方向，A -> B 逆时针
+			*/
+			double aa = cross(A, B);
+			double ang2 = vector_vector_angle(A, B);
+			int choice = sgn(aa);
+			if (choice >= 0)return ang2;
+			else return 2 * PI - ang2;
 		}
 
 		template<typename T>
