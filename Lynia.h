@@ -42,6 +42,135 @@ using pll = pair<ll, ll>;
 
 namespace MyTools
 {
+	class other {
+		/* [状压] 二进制选取枚举子集 
+			for (int subset = mask; subset; subset = (subset - 1) & mask) {
+				// 处理subset
+			}
+		*/
+
+		/* [数学]
+			- 常见数列求和公式
+			- 常见无穷级数求和公式
+			- 常见概率期望计算公式
+			- 常见组合数学计算公式
+		*/
+
+		/* [容斥]
+			|A ∪ B| = |A| + |B| - |A ∩ B|
+			=> 计算至少属于集合 A 或 B 的元素数量
+
+			|A ∪ B ∪ C| = |A| + |B| + |C| - |A ∩ B| - |A ∩ C| - |B ∩ C| + |A ∩ B ∩ C|
+			=> 计算至少属于集合 A、B、C 之一的元素数量 (奇正偶负)
+
+			|A ∩ B ∩ C| = |全集| - |反A ∪ 反B ∪ 反C|
+			=> 计算满足 A、B、C 所有条件的元素数量
+
+			|反A ∩ 反B ∩ 反C| = |全集| - |A ∪ B ∪ C|
+			=> 计算不满足 A、B、C 任何条件的元素数量
+		*/
+
+		/* [根号分治(阈值分块)]
+			根据某个阈值（通常是 √n 或类似的量级），将数据或操作分成“小块”和“大块”，分别采用不同的策略处理：
+				“小块”（如 x ≤ B）：通常采用预处理、前缀和、差分、计数数组等高效方法，使得查询或更新可以在 O(1) 或 O(B) 时间内完成。
+				“大块”（如 x > B）：由于数量较少(最多 O(n/B) 个)，可以采用暴力计算，但保证单次操作不超过 O(n/B) 时间。
+			目标：使得总时间复杂度在 O(n√n) 或 O(q√n) 范围内。
+		*/
+
+		/* [区间 dp]
+			关键在于 dp 状态的定义是否包括一个区间，比如 dp[i][j]：只处理 [i, j] 区间的最佳答案
+			发现题目可能是 dp，且可以使用区间来还定义状态时，就可以套区间 dp 板子 
+			复杂度可以为 O(N ^ 2) 或 O(N ^ 3)，复杂度取决于 dp 转移是否需要中间点，也就是是否需要两区间合并
+
+			O(N ^ 2)：
+				fa(len, 1, n)                 // 区间长度 
+					fa(i, 1, n - len + 1) {   // 起点
+						int j = i + len - 1;  // 终点
+					} 
+
+			O(N ^ 3)：
+				fa(len, 1, n)                 // 区间长度
+					fa(i, 1, n - len + 1) {   // 起点
+						int j = i + len - 1;  // 终点
+						fa(k, i, j - 1) {     // 两区间合并中间点
+
+						}
+					}
+		*/
+
+		/* [异或哈希]
+			异或哈希的精髓就是把原来的数赋个随机值，让 a XOR b 的值在值域上唯一，一般在 ull 范围内取随机数赋值。
+			MT::randint<ull>(0, ULLONG_MAX)
+			- 集合判等/判重问题
+			- 偶数次出现问题
+			- 路径/子树判重问题，节点分配哈希值
+		*/
+
+		/* [单调栈]
+			维护一个单调递减/递增栈，每次都把 i 放入栈，栈顶为最大/最小值
+			- 为序列每个元素寻找其左/右边第一个比它大/小的元素
+			- 计算序列每个元素作为最大/小值的区间范围
+			- 根据以上性质，针对具有单调性的问题进行 dp 优化
+		*/
+
+		/* [二进制拆分背包]
+			n 种物品，每种物品有 m 个，重量为 w，价值为 v，转成 nlogn 个物品，然后 01 背包操作
+
+			// 原物品：最多根号 N 种，根号 N 个
+			//		=> 
+			// 新物品 根号 N * logN 个
+			var h = MT::map_to_vector(yuan); // 原物品 { 物品重量 w：物品个数 }
+			var ve = vector<int>();          // 二进制拆分后新物品 { 物品新重量 nw：个数为 1 } 
+			fa(i, 0, (int)h.size() - 1) {
+				var[x, y] = h[i];
+				for (int j = 1; j <= y; j <<= 1) { // 枚举物品个数
+					y -= j;
+					ve.pb(j * x);
+				}
+				if (y)ve.pb(y * x); // 存在余数
+			}
+
+ 			// 01 背包
+			var dp = vector<bool>(n + 1);
+			dp[0] = 1;
+			for (const var& x : ve)
+				fb(i, n, x)
+				dp[i] = dp[i] || dp[i - x];
+		*/
+
+		/* [bitset]
+			比整数 (最多 64 位) 存的长，比 bool 数组算的快 (对整个 bitset 操作时，自带 /64 常数)
+
+
+			成员函数：
+				reset()：初始化全 0
+				set()：初始化全 1
+				any()：有 1 则 true
+				none()：无 1 则 false
+				flip()：整个 bitset 按位取反
+				count()：返回 1 的个数
+
+				_Find_first(), _Find_next()：
+					for (int pos = bs._Find_first(); pos < bs.size(); pos = bs._Find_next(pos)) {
+						// 遍历每个有 1 的位置
+					}
+
+
+			优化 bool 背包：
+
+				优化前：O(n * m)
+					dp[0] = 1;
+					fa(i, 1, n)
+						fb(j, W, w[i])
+							dp[j] |= dp[j - w[i]];
+
+				优化后：O(n * m / 64)
+					dp[0] = 1;
+					fa(i, 1, n)
+						dp |= dp << w[i]; // 一次移位即可计算所有背包容量的情况
+		*/
+	};
+
 	template <typename T>
 	class Math
 	{
@@ -215,6 +344,29 @@ namespace MyTools
 			fa(i, 1, tmp.size() - 1)sum += (tmp[i] - tmp[i - 1]) * (x / tmp[i - 1]);
 			return sum;
 		}
+
+		template<size_t N>
+		class fastGL {
+			// 范围 [0, N - 1]
+			// 预处理 gcd 表，然后 O(1) 求 gcd 和 lcm
+		private:
+			array<array<int, N>, N> G;
+		public:
+			fastGL() {
+
+				for (int i = 0; i < N; i++)
+					for (int j = 0; j < N; j++)
+						if (!i || !j) G[i][j] = i + j;
+						else if (i < j) G[i][j] = G[j % i][i];
+						else G[i][j] = G[i % j][j];
+			}
+			T gcd(T x, T y) {
+				return G[x][y];
+			}
+			T lcm(T x, T y) {
+				return x / G[x][y % x] * y;
+			}
+		};
 	};
 
 
@@ -323,19 +475,26 @@ namespace MyTools
 			return mp;
 		}
 
-		vector<int> primeFactorsVEC(int n)
+		vector<pair<int, int>> primeFactorsVEC(int n)
 		{ // 欧拉筛优化分解质因数 O(logn)
-			vector<int> se;
+			vector<pair<int, int>> ve;
 			int m = n;
 			for (int i : prime)
 			{
-				if (m % i == 0)se.push_back(i);
-				while (m % i == 0)m /= i;
+				if (m % i == 0) {
+					int cnt = 0;
+					while (m % i == 0) {
+						m /= i;
+						cnt++;
+					}
+					ve.push_back({ i, cnt });
+				}
+
 				if (isPrime(m) or m == 1) break;
 			}
 			if (m > 1)
-				se.push_back(m);
-			return se;
+				ve.push_back({ m, 1 });
+			return ve;
 		}
 
 		int segmentSieve(ll l, ll r) {
@@ -374,7 +533,6 @@ namespace MyTools
 			}
 		}
 	};
-
 
 	template <class Info>
 	class SegmentTree
@@ -1176,6 +1334,7 @@ namespace MyTools
 	{
 	public:
 		vector<int> depth;
+		vector<vector<int>> f; // f[x][i]即x的第2^i个祖先 (31是倍增用的，最大跳跃为2^30)
 		// vector<int>w; 树上边差分没准能用上，w[to] 表示 to 到其 fa 节点的边
 
 		LCA(int n, vector<vector<int>>& e)
@@ -1209,9 +1368,7 @@ namespace MyTools
 		}
 
 	private:
-		vector<vector<int>> f; // f[x][i]即x的第2^i个祖先 (31是倍增用的，最大跳跃为2^30)
-
-		void init(int now, int fa, vector<vector<int>>& e) // 邻接表
+		void init(int now, int fa, vector<vector<int>>& e)
 		{
 			depth[now] = depth[fa] + 1;
 			f[now][0] = fa;                                 // 第一个祖先
@@ -1550,6 +1707,12 @@ namespace MyTools
 	};
 
 	class XorBase {
+		/**
+		* 线性基
+		* - 原序列中任意一个数都可以通过线性基里的一些数异或得到
+		* - 线性基里的任意数异或起来都不能得到 0
+		* - 线性基里的数的个数唯一，在满足以上性质的前提下，存最少的数
+		*/
 	private:
 		vector<long long> a; // 线性基基底
 		const int MN = 62;
@@ -1577,10 +1740,11 @@ namespace MyTools
 
 		// 插入新数
 		void insert(long long x) {
+			// 跟 check 函数很像
 			for (int i = MN; ~i; i--)
 				if (x & (1ll << i))
-					if (!a[i]) { a[i] = x; return; }
-					else x ^= a[i];
+					if (!a[i]) { a[i] = x; return; } // 线性基里没有 x，插入 x
+					else x ^= a[i]; // 线性基里有 x
 			flag = true;
 		}
 
@@ -1971,6 +2135,28 @@ namespace MyTools
 
 
 	namespace Geo {
+		template<typename T>
+		class Point;
+
+		template<typename T>
+		class Line;
+
+		template<typename T>
+		class Polygon;
+
+		template<typename T>
+		class Circle;
+
+		template<typename T>
+		using Vector = Point<T>;
+
+		template<typename T>
+		using Segment = Line<T>;
+
+		template<typename T>
+		using PointSet = Polygon<T>;
+
+
 		const double eps = 1e-9;
 		const double PI = acos(-1.0);
 
@@ -2004,204 +2190,6 @@ namespace MyTools
 		}
 
 		template<typename T>
-		class Point {
-		private:
-			int id;
-
-		public:
-			T x, y;
-
-			Point(T x = 0, T y = 0) : x(x), y(y), id(0) {}
-
-			double polar_angle(const Point<T>& reference = Point(0, 0)) const {
-				/**
-				* 计算 this 点相较于 reference 点的极角
-				*/
-				double res = atan2(y - reference.y, x - reference.x);
-				if (sgn(res) < 0) res += (2 * PI);
-				return res;
-			}
-
-			double len() const { return sqrt((*this) * (*this)); } // 向量长度
-			T len2() const { return (*this) * (*this); } // 向量长度的平方
-
-			int quadrant() {
-				/**
-				* 求点所在象限，包括了 xy 正负半轴
-				* 可用于叉积法 (cross) 极角排序
-				*/
-				if (x > 0 && y >= 0)return 1;      // 包含了 y 非负半轴
-				else if (x <= 0 && y > 0)return 2; // 包含了 x 非正半轴
-				else if (x < 0 && y <= 0)return 3; // 包含了 y 非正半轴
-				else if (x >= 0 && y < 0)return 4; // 包含了 x 非负半轴
-				else return 0; // 原点
-			}
-
-			void set_id(int id) { this->id = id; }
-			int get_id()const { return id; }
-
-			Point operator- (const Point& B) const { return Point(x - B.x, y - B.y); }
-			Point operator+ (const Point& B) const { return Point(x + B.x, y + B.y); }
-			T operator^ (const Point<T>& B) const { return x * B.y - y * B.x; } // 叉积
-			T operator* (const Point<T>& B) const { return x * B.x + y * B.y; } // 点积
-			Point operator* (const T& B) const { return Point(x * B, y * B); }
-			Point operator/ (const T& B) const { return Point(x / B, y / B); }
-			bool operator< (const Point& B) const { return cmp(x, B.x) == -1 || (cmp(x, B.x) == 0 && cmp(y, B.y) == -1); }
-			bool operator> (const Point& B) const { return cmp(x, B.x) == 1 || (cmp(x, B.x) == 0 && cmp(y, B.y) == 1); }
-			bool operator== (const Point& B) const { return cmp(x, B.x) == 0 && cmp(y, B.y) == 0; }
-			bool operator!= (const Point& B) const { return !(*this == B); }
-
-			friend ostream& operator<<(ostream& out, const Point& a) {
-				out << '(' << a.x << ", " << a.y << ')';
-				return out;
-			}
-		};
-
-		template<typename T>
-		class Line {
-		public:
-			Point<T> p1, p2; // 线上的两个点
-			Line() {}
-			Line(const Point<T>& p1, const Point<T>& p2) :p1(p1), p2(p2) {}
-			Line(const Point<T>& p, double angle) {
-				/**
-				* 根据一个点和倾斜角 angle 确定直线，0 <= angle < pi
-				*/
-				p1 = p;
-				if (sgn(angle - PI / 2) == 0) { p2 = (p1 + Point<T>(0, 1)); }
-				else { p2 = (p1 + Point<T>(1, tan(angle))); }
-			}
-			Line(double a, double b, double c) {     // ax + by + c = 0
-				if (sgn(a) == 0) {
-					p1 = Point<T>(0, -c / b);
-					p2 = Point<T>(1, -c / b);
-				}
-				else if (sgn(b) == 0) {
-					p1 = Point<T>(-c / a, 0);
-					p2 = Point<T>(-c / a, 1);
-				}
-				else {
-					p1 = Point<T>(0, -c / b);
-					p2 = Point<T>(1, (-c - a) / b);
-				}
-			}
-			friend ostream& operator<<(ostream& out, const Line<T>& a) {
-				out << "[" << a.p1 << ", " << a.p2 << "]";
-				return out;
-			}
-
-			bool is_no_k() {
-				return sgn(p2.x - p1.x) == 0;
-			}
-
-			double k() const {
-				/**
-				* 计算斜率 k
-				* 注意：直线平行于 y 轴，斜率 k 不存在
-				*/
-				assert(sgn(p2.x - p1.x) != 0); // 垂直线，斜率不存在
-				return double(p2.y - p1.y) / (p2.x - p1.x);
-			}
-
-			double b() const {
-				/**
-				* 计算截距 b
-				* 注意：直线平行于 y 轴，斜率 k 不存在
-				*/
-				assert(sgn(p2.x - p1.x) != 0); // 垂直线，斜率不存在
-				double _k = k();
-				return p1.y - _k * p1.x;
-			}
-		};
-
-		template<typename T>
-		class Polygon : public vector<Point<T>> {
-		public:
-			Polygon() {}
-			Polygon(int n) :vector<Point<T>>(n) {}
-
-			// 多边形的周长
-			T Perimeter() {
-				T ans = 0;
-				int n = this->size();
-				for (int i = 0; i < n; i++)
-					ans += point_point_dist((*this)[i], (*this)[(i + 1) % n]);
-				return ans;
-			}
-
-			// 多边形的面积
-			T Area() {
-				T area = 0;
-				int n = this->size();
-				for (int i = 0; i < n; i++) {
-					area += cross((*this)[i], (*this)[(i + 1) % n]);
-				}
-				return abs(area) / 2.0;
-			}
-
-			// 多边形的面积 * 2
-			long long Area2() {
-				long long area = 0;
-				int n = this->size();
-				for (int i = 0; i < n; i++) {
-					area += cross((*this)[i], (*this)[(i + 1) % n]);
-				}
-				return abs(area);
-			}
-
-			// atan2 极角排序，默认逆时针排序
-			void Polar_angle_sort_atan2(const Point<T>& reference = Point<T>(0, 0)) {
-				sort(this->begin(), this->end(),
-					[&](const Point<T>& a, const Point<T>& b)->bool
-					{ return a.polar_angle(reference) < b.polar_angle(reference); });
-			}
-
-			// cross 极角排序，默认逆时针排序
-			void Polar_angle_sort_cross(const Point<T>& reference = Point<T>(0, 0)) {
-				sort(this->begin(), this->end(),
-					[&](Point<T> a, Point<T> b)->bool {
-						a = a - reference; b = b - reference;
-						if (a.quadrant() != b.quadrant())return a.quadrant() < b.quadrant();
-						return sgn(cross(a, b)) > 0;
-					});
-			}
-
-			friend ostream& operator<<(ostream& out, const Polygon<T>& a) {
-				out << "[";
-				for (int i = 0; i < a.size(); i++)
-					out << a[i] << ",]"[i == a.size() - 1];
-				return out;
-			}
-		};
-
-		template<typename T>
-		class Circle {
-		public:
-			Point<T> c;  // 圆心
-			T r;         // 半径
-			Circle() {}
-			Circle(Point<T> c, T r) :c(c), r(r) {}
-			Circle(T x, T y, T _r) { c = Point<T>(x, y); r = _r; }
-			double area() const { return PI * r * r; }
-			double arc_area(const db& angle) const { return area() * angle / 360.0; }
-			friend ostream& operator<<(ostream& out, const Circle<T>& a) {
-				out << "(" << a.c << ", " << a.r << ")";
-				return out;
-			}
-		};
-
-
-		template<typename T>
-		using Vector = Point<T>;
-
-		template<typename T>
-		using Segment = Line<T>;
-
-		template<typename T>
-		using PointSet = Polygon<T>;
-
-
-		template<typename T>
 		double point_point_dist(const Point<T>& A, const Point<T>& B) {
 			/**
 			* 两点距离
@@ -2221,7 +2209,7 @@ namespace MyTools
 		T dot(const Vector<T>& A, const Vector<T>& B) {
 			/**
 			* 计算点积  a · b = |a| |b| cos
-			* 可用于判断两向量夹角
+			* - 判断两向量夹角是否 > 90
 			*/
 			return A.x * B.x + A.y * B.y;
 		}
@@ -2230,18 +2218,21 @@ namespace MyTools
 		T cross(const Vector<T>& A, const Vector<T>& B) {
 			/**
 			* 计算叉积  a · b = |a| |b| sin
-			* 可以判断两向量的相对方向
-			* 也能算两向量形成的平行四边形的有向面积
+			* 逆时针输入 A B
+			* - 判断两向量的相对方向
+			* - 算两向量形成的平行四边形的有向面积
+			* - 判断两向量夹角是否 > 180
 			*/
 			return A.x * B.y - A.y * B.x;
 		}
 
-		Point<db> angle_to_point(const db& ang) {
-			/**
-			* 极角变单位坐标
-			*/
-			return { cos(ang), sin(ang) };
-		}
+		// 为了过编译，注释此处
+		//Point<db> angle_to_point(const db& ang) {
+		//	/**
+		//	* 极角变单位坐标
+		//	*/
+		//	return { cos(ang), sin(ang) };
+		//}
 
 		template<typename T>
 		double vector_len(const Vector<T>& A) {
@@ -2276,10 +2267,11 @@ namespace MyTools
 		template<typename T>
 		double vector_vector_angle_directed(const Vector<T>& A, const Vector<T>& B) {
 			/**
-			* 两向量夹角 (弧度制)
-			* 带方向，A -> B 逆时针
+			* 两向量夹角 (弧度制) 带方向
+			* A -> B 逆时针旋转角度
+			* 可以算多边形内角
 			*/
-			double aa = cross(A, B);
+			long long aa = cross(A, B);
 			double ang2 = vector_vector_angle(A, B);
 			int choice = sgn(aa);
 			if (choice >= 0)return ang2;
@@ -2311,7 +2303,7 @@ namespace MyTools
 			/**
 			* 计算两向量构成的平行四边形有向面积
 			* 三个点A、B、C，以 A 为公共点，得到 2 个向量 AB 和 AC，它们构成的平行四边形
-			* 请逆时针输入 B C 两点
+			* 逆时针输入 B C
 			*/
 			return cross(B - A, C - A);
 		}
@@ -2321,7 +2313,7 @@ namespace MyTools
 			/**
 			* 计算两向量构成的平行四边形有向面积
 			* 两个有公共点的向量 A B 构成的平行四边形
-			* 请逆时针输入 A B 向量
+			* 逆时针输入 A B
 			*/
 			return cross(A, B);
 		}
@@ -2331,7 +2323,7 @@ namespace MyTools
 			/**
 			* 计算两向量构成的三角形有向面积
 			* 三个点A、B、C，以 A 为公共点，得到 2 个向量 AB 和 AC，它们构成的三角形
-			* 请逆时针输入 B C 两点
+			* 逆时针输入 B C
 			*/
 			return cross(B - A, C - A) / 2.0;
 		}
@@ -2341,7 +2333,7 @@ namespace MyTools
 			/**
 			* 计算两向量构成的三角形有向面积
 			* 两个有公共点的向量 A B 构成的三角形
-			* 请逆时针输入 A B 向量
+			* 逆时针输入 A B
 			*/
 			return cross(A, B) / 2.0;
 		}
@@ -2932,6 +2924,224 @@ namespace MyTools
 			}
 			return mx;
 		}
+
+		template<typename T>
+		class Point {
+		private:
+			int id;
+
+		public:
+			T x, y;
+
+			Point(T x = 0, T y = 0) : x(x), y(y), id(0) {}
+
+			double polar_angle(const Point<T>& reference = Point(0, 0)) const {
+				/**
+				* 计算 this 点相较于 reference 点的极角
+				*/
+				double res = atan2(y - reference.y, x - reference.x);
+				if (sgn(res) < 0) res += (2 * PI);
+				return res;
+			}
+
+			double len() const { return sqrt((*this) * (*this)); } // 向量长度
+			T len2() const { return (*this) * (*this); } // 向量长度的平方
+
+			int quadrant() {
+				/**
+				* 求点所在象限，包括了 xy 正负半轴
+				* 可用于叉积法 (cross) 极角排序
+				*/
+				if (x > 0 && y >= 0)return 1;      // 包含了 y 非负半轴
+				else if (x <= 0 && y > 0)return 2; // 包含了 x 非正半轴
+				else if (x < 0 && y <= 0)return 3; // 包含了 y 非正半轴
+				else if (x >= 0 && y < 0)return 4; // 包含了 x 非负半轴
+				else return 0; // 原点
+			}
+
+			void set_id(int id) { this->id = id; }
+			int get_id()const { return id; }
+
+			Point operator- (const Point& B) const { return Point(x - B.x, y - B.y); }
+			Point operator+ (const Point& B) const { return Point(x + B.x, y + B.y); }
+			T operator^ (const Point<T>& B) const { return x * B.y - y * B.x; } // 叉积
+			T operator* (const Point<T>& B) const { return x * B.x + y * B.y; } // 点积
+			Point operator* (const T& B) const { return Point(x * B, y * B); }
+			Point operator/ (const T& B) const { return Point(x / B, y / B); }
+			bool operator< (const Point& B) const { return cmp(x, B.x) == -1 || (cmp(x, B.x) == 0 && cmp(y, B.y) == -1); }
+			bool operator> (const Point& B) const { return cmp(x, B.x) == 1 || (cmp(x, B.x) == 0 && cmp(y, B.y) == 1); }
+			bool operator== (const Point& B) const { return cmp(x, B.x) == 0 && cmp(y, B.y) == 0; }
+			bool operator!= (const Point& B) const { return !(*this == B); }
+
+			friend ostream& operator<<(ostream& out, const Point& a) {
+				out << '(' << a.x << ", " << a.y << ')';
+				return out;
+			}
+		};
+
+		template<typename T>
+		class Line {
+		public:
+			Point<T> p1, p2; // 线上的两个点
+			Line() {}
+			Line(const Point<T>& p1, const Point<T>& p2) :p1(p1), p2(p2) {}
+			Line(const Point<T>& p, double angle) {
+				/**
+				* 根据一个点和倾斜角 angle 确定直线，0 <= angle < pi
+				*/
+				p1 = p;
+				if (sgn(angle - PI / 2) == 0) { p2 = (p1 + Point<T>(0, 1)); }
+				else { p2 = (p1 + Point<T>(1, tan(angle))); }
+			}
+			Line(double a, double b, double c) {     // ax + by + c = 0
+				if (sgn(a) == 0) {
+					p1 = Point<T>(0, -c / b);
+					p2 = Point<T>(1, -c / b);
+				}
+				else if (sgn(b) == 0) {
+					p1 = Point<T>(-c / a, 0);
+					p2 = Point<T>(-c / a, 1);
+				}
+				else {
+					p1 = Point<T>(0, -c / b);
+					p2 = Point<T>(1, (-c - a) / b);
+				}
+			}
+			friend ostream& operator<<(ostream& out, const Line<T>& a) {
+				out << "[" << a.p1 << ", " << a.p2 << "]";
+				return out;
+			}
+
+			bool is_no_k() {
+				return sgn(p2.x - p1.x) == 0;
+			}
+
+			double k() const {
+				/**
+				* 计算斜率 k
+				* 注意：直线平行于 y 轴，斜率 k 不存在
+				*/
+				assert(sgn(p2.x - p1.x) != 0); // 垂直线，斜率不存在
+				return double(p2.y - p1.y) / (p2.x - p1.x);
+			}
+
+			double b() const {
+				/**
+				* 计算截距 b
+				* 注意：直线平行于 y 轴，斜率 k 不存在
+				*/
+				assert(sgn(p2.x - p1.x) != 0); // 垂直线，斜率不存在
+				double _k = k();
+				return p1.y - _k * p1.x;
+			}
+		};
+
+		template<typename T>
+		class Polygon : public vector<Point<T>> {
+		public:
+			Polygon() {}
+			Polygon(int n) :vector<Point<T>>(n) {}
+
+			// 多边形的周长
+			T perimeter() {
+				T ans = 0;
+				int n = this->size();
+				for (int i = 0; i < n; i++)
+					ans += point_point_dist((*this)[i], (*this)[(i + 1) % n]);
+				return ans;
+			}
+
+			// 多边形的面积
+			db area() {
+				T area = 0;
+				int n = this->size();
+				for (int i = 0; i < n; i++) {
+					area += cross((*this)[i], (*this)[(i + 1) % n]);
+				}
+				return abs(area) / 2.0;
+			}
+
+			// 多边形的面积 * 2
+			long long area2() {
+				long long area = 0;
+				int n = this->size();
+				for (int i = 0; i < n; i++) {
+					area += cross((*this)[i], (*this)[(i + 1) % n]);
+				}
+				return abs(area);
+			}
+
+			// 多边形的面积
+			db area_directed() {
+				T area = 0;
+				int n = this->size();
+				for (int i = 0; i < n; i++) {
+					area += cross((*this)[i], (*this)[(i + 1) % n]);
+				}
+				return area / 2.0;
+			}
+
+			// 多边形的面积 * 2
+			long long area2_directed() {
+				long long area = 0;
+				int n = this->size();
+				for (int i = 0; i < n; i++) {
+					area += cross((*this)[i], (*this)[(i + 1) % n]);
+				}
+				return area;
+			}
+
+			bool winding_order() {
+				/**
+				* 检查多边形里的点按什么顺序排列
+				* 根据多边形有向面积判断
+				* 返回值：
+				*	0：顺时针
+				*	1：逆时针
+				*/
+				return (area2_directed() > 0);
+			}
+
+			// atan2 极角排序，默认逆时针排序
+			void polar_angle_sort_atan2(const Point<T>& reference = Point<T>(0, 0)) {
+				sort(this->begin(), this->end(),
+					[&](const Point<T>& a, const Point<T>& b)->bool
+					{ return a.polar_angle(reference) < b.polar_angle(reference); });
+			}
+
+			// cross 极角排序，默认逆时针排序
+			void polar_angle_sort_cross(const Point<T>& reference = Point<T>(0, 0)) {
+				sort(this->begin(), this->end(),
+					[&](Point<T> a, Point<T> b)->bool {
+						a = a - reference; b = b - reference;
+						if (a.quadrant() != b.quadrant())return a.quadrant() < b.quadrant();
+						return sgn(cross(a, b)) > 0;
+					});
+			}
+
+			friend ostream& operator<<(ostream& out, const Polygon<T>& a) {
+				out << "[";
+				for (int i = 0; i < a.size(); i++)
+					out << a[i] << ",]"[i == a.size() - 1];
+				return out;
+			}
+		};
+
+		template<typename T>
+		class Circle {
+		public:
+			Point<T> c;  // 圆心
+			T r;         // 半径
+			Circle() {}
+			Circle(Point<T> c, T r) :c(c), r(r) {}
+			Circle(T x, T y, T _r) { c = Point<T>(x, y); r = _r; }
+			double area() const { return PI * r * r; }
+			double arc_area(const db& angle) const { return area() * angle / 360.0; }
+			friend ostream& operator<<(ostream& out, const Circle<T>& a) {
+				out << "(" << a.c << ", " << a.r << ")";
+				return out;
+			}
+		};
 	}
 
 
@@ -3174,6 +3384,68 @@ namespace MyTools
 		}
 	};
 
+	tuple<int, vector<vector<int>>, vector<ll>, vector<int>> scc_shrink(int n, const vector<vector<int>>& g, const vector<ll>& a) {
+		/**
+		* 缩点板子
+		* 传入：原图节点个数 n、原图 g、原图节点权值 a
+		* 返回：新图节点个数 scc、新图 ng、新图节点权值 na
+		* 缩点完毕后变成有向无环图，可能需要拓扑排序
+		*
+		* 强连通：一张有向图的节点两两互相可达
+		* 强连通分量：极大的强连通子图
+		* Tarjan 算法：通过记录深搜遍历中每个节点的第一次访问时间来找到强连通分量的根以及其余节点
+		*/
+
+		var dfn = vector<int>(n + 1); // dfs序时间戳
+		var low = vector<int>(n + 1); // i 点能回溯到的最顶端祖先的 dfn
+		var ins = vector<int>(n + 1); // 是否在栈内
+		var bel = vector<int>(n + 1); // i 点属于第几个强连通分量
+		var st = stack<int>();        // 正在处理的栈
+		int time = 0;                 // 时间戳
+		int scc = 0;                  // 强连通分量个数，同时也是新图节点个数(单个节点也是个 scc)
+
+		var tarjan = [&](var tarjan, int now)->void {
+			dfn[now] = low[now] = ++time;
+			st.push(now);
+			ins[now] = 1;
+			for (const int& to : g[now]) {
+				if (!dfn[to]) { // 未遍历到的节点
+					tarjan(tarjan, to);
+					low[now] = min(low[now], low[to]);
+				}
+				else if (ins[to]) { // 环
+					low[now] = min(low[now], dfn[to]);
+				}
+			}
+			// 弹栈缩点
+			if (low[now] == dfn[now]) {
+				scc++;
+				while (1) {
+					int cur = st.top();
+					st.pop();
+					ins[cur] = 0;
+					bel[cur] = scc;
+					if (now == cur)break;
+				}
+			}
+			};
+		fa(i, 1, n) if (!dfn[i]) tarjan(tarjan, i);
+
+
+		// 构建新有向图
+		var ng = vector<vector<int>>(scc + 1); // 缩点后的新图
+		var na = vector<ll>(scc + 1);          // 缩点后的新权值
+		var siz = vector<int>(scc + 1);        // 缩点后新节点包含了多少原节点(可选)
+		fa(now, 1, n) {
+			for (const int& to : g[now])
+				if (bel[to] != bel[now]) // 不在同一个 scc 内
+					ng[bel[now]].pb(bel[to]);
+			na[bel[now]] += a[now];
+			siz[bel[now]]++;
+		}
+
+		return make_tuple(scc, ng, na, siz);
+	}
 }
 
 namespace MT = MyTools;
