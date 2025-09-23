@@ -47,6 +47,16 @@ namespace MyTools
 			for (int subset = mask; subset; subset = (subset - 1) & mask) {
 				// 处理subset
 			}
+
+			fa(t, 1, k) {
+				// 枚举两套无交集的二进制选择 总复杂度为 O(3 ^ m)
+				// (这里复杂度比较难算，纯靠估算出 4^m 就完蛋了)
+				fa(i, 0, tot - 1) {
+					ll tmp = i ^ (tot - 1);
+					for (ll j = tmp; j > 0; j = (j - 1) & tmp)
+						dp[t][i ^ j] = max(dp[t][i ^ j], dp[t - 1][i] + mx[j]);
+				}
+			}
 		*/
 
 		/* [数学]
@@ -72,9 +82,15 @@ namespace MyTools
 
 		/* [根号分治(阈值分块)]
 			根据某个阈值（通常是 √n 或类似的量级），将数据或操作分成“小块”和“大块”，分别采用不同的策略处理：
-				“小块”（如 x ≤ B）：通常采用预处理、前缀和、差分、计数数组等高效方法，使得查询或更新可以在 O(1) 或 O(B) 时间内完成。
-				“大块”（如 x > B）：由于数量较少(最多 O(n/B) 个)，可以采用暴力计算，但保证单次操作不超过 O(n/B) 时间。
+				“小块”（如 x ≤ B）：
+					- 通常采用预处理、前缀和、差分、计数数组等高效方法，使得查询或更新可以在 O(1) 或 O(B) 时间内完成。
+					- 也可以用暴力计算，小块用小块的算法，大块用大块的，但保证单次操作不超过 O(B ^ 2) 时间，总最高复杂度达 O(B ^ 3)。
+				“大块”（如 x > B）：
+					- 总情况数较少(最多 B 个)，可以采用暴力计算，单次操作可以保持 O(n) 复杂度，总最高复杂度达 O(n * B)。
+
 			目标：使得总时间复杂度在 O(n√n) 或 O(q√n) 范围内。
+
+			- 1e5 的题都可以想想能不能用根号分治优化，有时候会有奇效。
 		*/
 
 		/* [区间 dp]
@@ -83,19 +99,21 @@ namespace MyTools
 			复杂度可以为 O(N ^ 2) 或 O(N ^ 3)，复杂度取决于 dp 转移是否需要中间点，也就是是否需要两区间合并
 
 			O(N ^ 2)：
-				fa(len, 1, n)                 // 区间长度 
+				fa(len, 2, n)                 // 区间长度 
 					fa(i, 1, n - len + 1) {   // 起点
 						int j = i + len - 1;  // 终点
 					} 
 
 			O(N ^ 3)：
-				fa(len, 1, n)                 // 区间长度
+				fa(len, 2, n)                 // 区间长度
 					fa(i, 1, n - len + 1) {   // 起点
 						int j = i + len - 1;  // 终点
 						fa(k, i, j - 1) {     // 两区间合并中间点
 
 						}
 					}
+			
+			注意：一般区间长度 len 为 1 时需要自己初始化
 		*/
 
 		/* [异或哈希]
@@ -140,7 +158,8 @@ namespace MyTools
 
 		/* [bitset]
 			比整数 (最多 64 位) 存的长，比 bool 数组算的快 (对整个 bitset 操作时，自带 /64 常数)
-
+			- 布尔 DP 问题
+			- 集合交并等处理问题
 
 			成员函数：
 				reset()：初始化全 0
@@ -168,6 +187,128 @@ namespace MyTools
 					dp[0] = 1;
 					fa(i, 1, n)
 						dp |= dp << w[i]; // 一次移位即可计算所有背包容量的情况
+		*/
+
+		/* [换根 dp]
+			- 题目要求输出每个点为根的答案
+			- 计算答案时，必须考虑到节点上方的贡献
+
+
+			~  三种换根方法  ~
+			
+			1. 直接 down 数组公式推导，比较简单的情况。
+
+
+			2. 用 up/down 数组，并用 multiset/bitset 数组 mp[u][v] 辅助。
+
+				第一次 dfs，后根遍历(全部子节点递归完后)，计算 down 数组；
+				第二次 dfs，先根遍历(全部子节点递归前 或 单个子节点递归前)，计算 up 数组。
+				此方法较为通用，但复杂度较高。
+
+				up 数组可开个二维数组 mp[N][N] (可通过哈希表加速) 求出
+					=> mp[u][v]：u 的所有子树 (除了 v 子树) 的答案 (如：各子节点的集合等)
+						=> 用前后缀算
+						=> 全算了再减掉子树
+					=> up[now] = F( mp[u][v] + up[fa] ); (F 函数代表这样之后还得进行处理，如：bitset 要 <<= 1)
+					=> 当然可以再优化成一维的 mp[v]，如：multiset<int> mp[N];
+
+
+			3. 只用一个 multiset 数组 dp。
+				=> 要能明确 dp 里存了哪些答案，所以用 multiset。
+
+				只用一个数组的话，要求 dp[now]: 以 now 为根节点的整个树的答案，不分上面下面。
+
+				第一次 dfs: 直接后根遍历，按 down 数组的方式计算；
+				第二次 dfs: 
+					=> 在枚举到 now-to 时，now 子树撤销来自 to 子树的贡献，相当于砍掉 now-to 连边;
+					=> (可选，取决于答案如何更新)撤销完所有来自 to 子树的贡献后，再求一遍 now 子树的答案(如最值什么的)；
+					=> 重新更新 to 子树的答案：
+						=> 撤销 to 子树之前的答案，把 now 看成 to、to 看成 now，建 to-now 连边，更新 dp；
+						=> 更新完后，此时 dp 已经变成了以 to 为根的整个树的答案；
+					=> (注意)拆了 now-to 更新答案？还是建完 to-now 连边更新答案？看题意决定；
+					=> 子树 dfs 完后，now 子树的撤销全部还原。
+
+		*/
+
+		/* [exgcd 与 裴蜀定理]
+			exgcd 最基础的用法是用来求 ax + by = gcd(a, b) 的整数解
+		*/
+
+		/* [树上倍增]
+			- 有唯一父子关系的题都能用(一个点能到达的下一个点是唯一确定的)，如：树、基环树(n个点n条边)
+			- 要考虑树上一条链的贡献的情况，且链可能是基环树上的环
+			
+
+			// 初始化倍增
+			var p = Vec2<int>(n + 1, 31);  // 倍增父节点表
+			var dp = Vec2<pll>(n + 1, 31); // 从节点 i 开始，向上跳跃 2 ^ j 步的路径上的信息
+			fa(j, 1, 30) {
+				fa(i, 1, n) {
+					p[i][j] = p[p[i][j - 1]][j - 1];
+					// f 函数根据题意分析
+					dp[i][j] = f(dp[i][j - 1], dp[p[i][j - 1]][j - 1]);
+				}
+			}
+
+			// 查询倍增
+			int now; // 当前节点
+			fb(i, 30, 0) {
+				// 从大到小检查就行
+				if (满足题目条件 and p[now][i]) {
+					
+					now = p[now][i]; // 跳到下一个节点
+				}
+			}
+		*/
+
+		/* [LIS]
+		
+			// 动态规划 O(n ^ 2)
+			// 最长单调增子序列
+			fa(i, 1, n)
+				fa(j, 1, i - 1)
+				if (a[i] > a[j])
+					dp[i] = max(dp[i], dp[j] + 1);
+			ans = *max_element(dp + 1, dp + n + 1);
+
+			// 二分+单调栈 O(nlogn)
+			// 最长单调不增子序列
+			int cnt = 0;
+			st[++cnt] = a[1];
+			fa(i, 2, n) {
+				if (a[i] <= st[cnt])st[++cnt] = a[i];
+				else {
+					int id = lower_bound(st + 1, st + 1 + cnt, a[i], greater<>()) - st;
+					st[id] = a[i];
+				}
+			}
+			ans = cnt;
+
+
+			计算 LIS 数量：反向算性质相反的子序列数量即可。
+		*/
+
+		/* [期望]
+			大部分期望题都可以推公式解决，使用递推或直接O(1)，难度在于找出最好推式子的 E(dp) 的状态，得多找多试几种 E。
+		*/
+
+		/* [gcd]
+			1. 更相减损术
+				- b >= a 时：gcd(a, b) = gcd(a, b - a) = gcd(a, b % a) 
+				- 一般式：gcd(a, b) = gcd(a OR b, |a - b|)
+				- 推广到：{
+					gcd(a, b, c, d) = gcd(a, |b - a|, |c - b|, |d - c|)
+					gcd(a, b, c, d) = gcd(|a - b|, |b - c|, |c - d|, d)
+				}
+
+			2. 辗转相除法
+				gcd(a, b) = gcd(a, b % a) 
+		*/
+
+		/* [质数定理，质数间隔]
+			- 小于 n 的质数个数 c(n) ~ n / ln(n)，即当 n 很大时，c(n) 约等于 n / ln(n)
+			- 平均间隔 ~ ln(n)，即当 n 很大时，相邻质数的平均间隔约等于 ln(n)，间隔并不会很远，如 n = 1e18 时，ln(n) = 41
+			- 最大间隔 ~ (ln(n)) ^ 2，即当 n 很大时，相邻质数的最大间隔约等于 (ln(n)) ^ 2，如果 n 较小，建议直接算
 		*/
 	};
 
@@ -241,6 +382,14 @@ namespace MyTools
 			vector<vector<int>> factorsCnts(n + 1);
 			for (int i = 1; i <= n; i++)
 				for (int j = i; j <= n; j += i)
+					factorsCnts[j].push_back(i);
+			return factorsCnts;
+		}
+		template<const int N>
+		static array<vector<int>, N> factorsAllArray() {
+			static array<vector<int>, N> factorsCnts;
+			for (int i = 1; i <= N - 1; i++)
+				for (int j = i; j <= N - 1; j += i)
 					factorsCnts[j].push_back(i);
 			return factorsCnts;
 		}
@@ -353,7 +502,6 @@ namespace MyTools
 			array<array<int, N>, N> G;
 		public:
 			fastGL() {
-
 				for (int i = 0; i < N; i++)
 					for (int j = 0; j < N; j++)
 						if (!i || !j) G[i][j] = i + j;
@@ -367,8 +515,23 @@ namespace MyTools
 				return x / G[x][y % x] * y;
 			}
 		};
-	};
 
+		template<size_t N, const int mod>
+		class PreInv {
+			// 预处理逆元
+		private:
+			array<int, N> _inv;
+		public:
+			PreInv() {
+				_inv[1] = 1;
+				for (int i = 2; i <= (int)N - 1; i++)
+					_inv[i] = (mod - mod / i) * 1ll * _inv[mod % i] % mod;
+			}
+			int inv(int n) const {
+				return _inv[n];
+			}
+		};
+	};
 
 	class Combinatorics
 	{
@@ -448,25 +611,35 @@ namespace MyTools
 		int cnt = 0;
 		vector<int> prime;
 
-		EulerPrime(int n) : vis(n + 1) { init(n); }
+		EulerPrime(int n) : vis(n + 1), MAXN(n) { init(n); }
 
-		bool isPrime(int n)
+		bool isPrime(ll n)
 		{
-			if (n == 1 || n == 0)
-				return 0;
-			return !vis[n];
+			// 可判断 MAXN * MAXN 以内的数，O(根号 n / logn)
+
+			if (n <= 1) return false;
+			if (n <= MAXN) return !vis[n];
+
+			for (ll p : prime) {
+				if (p * p > n) break;
+				if (n % p == 0) return false;
+			}
+			return true;
 		}
 
-		map<int, int> primeFactorsMAP(int n)
-		{ // 欧拉筛优化分解质因数 O(logn)
-			map<int, int> mp;
-			int m = n;
-			for (int i : prime)
+		map<ll, ll> primeFactorsMAP(ll n) {
+			// 欧拉筛优化分解质因数 O(logn)，可判断 MAXN * MAXN 以内的数
+
+			map<ll, ll> mp;
+			ll m = n;
+			for (ll p : prime)
 			{
-				while (m % i == 0)
+				if (p * p > n) break;
+
+				while (m % p == 0)
 				{
-					m /= i;
-					mp[i]++;
+					m /= p;
+					mp[p]++;
 				}
 				if (isPrime(m) or m == 1) break;
 			}
@@ -475,26 +648,53 @@ namespace MyTools
 			return mp;
 		}
 
-		vector<pair<int, int>> primeFactorsVEC(int n)
-		{ // 欧拉筛优化分解质因数 O(logn)
-			vector<pair<int, int>> ve;
-			int m = n;
-			for (int i : prime)
+		vector<pair<ll, ll>> primeFactorsVEC(ll n) {
+			// 欧拉筛优化分解质因数 O(logn)，可判断 MAXN * MAXN 以内的数
+
+			vector<pair<ll, ll>> ve;
+			ll m = n;
+			for (ll p : prime)
 			{
-				if (m % i == 0) {
-					int cnt = 0;
-					while (m % i == 0) {
-						m /= i;
+				if (p * p > n) break;
+
+				if (m % p == 0) {
+					ll cnt = 0;
+					while (m % p == 0) {
+						m /= p;
 						cnt++;
 					}
-					ve.push_back({ i, cnt });
+					ve.push_back({ p, cnt });
 				}
-
-				if (isPrime(m) or m == 1) break;
 			}
 			if (m > 1)
 				ve.push_back({ m, 1 });
 			return ve;
+		}
+
+		vector<ll> factorNumbers(ll n) {
+			// 欧拉筛优化分解因数 O(logn)，可判断 MAXN * MAXN 以内的数
+
+			auto ps = primeFactorsVEC(n);
+			auto res = vector<ll>();
+			
+			// 暴力枚举每个因子出现几次
+			auto dfs = [&](auto dfs, int now, ll p)->void {
+				if (now > (int)ps.size() - 1) {
+					res.push_back(p);
+					return;
+				}
+
+				ll np = p;
+				dfs(dfs, now + 1, np);
+				fa(i, 1, ps[now].second) {
+					np *= ps[now].first;
+					dfs(dfs, now + 1, np);
+				}
+				return;
+				};
+			dfs(dfs, 0, 1);
+
+			return res;
 		}
 
 		int segmentSieve(ll l, ll r) {
@@ -515,6 +715,7 @@ namespace MyTools
 		}
 
 	private:
+		int MAXN;
 		vector<bool> vis;
 		void init(int n) // 欧拉筛
 		{
@@ -614,90 +815,54 @@ namespace MyTools
 			return query(L, R, 1, 1, n);
 		}
 
-		//int query_kth(int p, int pl, int pr, ll x) {
-		//	/**
-		//	* 返回最大的mid满足sum[1..mid] < x
-		//	*/
-
+		//int query1(int p, int pl, int pr, ll x) {
+		//	// 返回最后一个前缀和小于 x 的位置
+		//	
 		//	if (info[p].sum < x)return pr + 1;
 		//	if (pl == pr)return pl;
 
 		//	int mid = pl + pr >> 1;
-		//	int pos = query_kth(l(p), pl, mid, x);
+		//	int pos = query1(l(p), pl, mid, x);
 		//	if (pos != mid + 1)return pos;
-		//	else return query_kth(r(p), mid + 1, pr, x - info[l(p)].sum);
+		//	else return query1(r(p), mid + 1, pr, x - info[l(p)].sum);
 		//}
-		//int query_kth(ll x) {
-		//	return query_kth(1, 1, n, x) - 1;
+		//int query1(ll x) {
+		//	return query1(1, 1, n, x) - 1;
+		//}
+
+		//int query2(int p, int pl, int pr, ll x) {
+		//	// 返回第一个前缀和大于x的位置
+		//	if (pl == pr)return pl;
+
+		//	int mid = pl + pr >> 1;
+		//	if (info[l(p)].sum > x)return Query(l(p), pl, mid, x);
+		//	else return Query(r(p), mid + 1, pr, x - info[l(p)].sum);
+		//}
+		//int query2(ll x) {
+		//	return query2(1, 1, n, x);
 		//}
 #undef l(p)
 #undef r(p)
 	};
+	/* Info
+		struct Info {
+			Info() {};
+
+			// 要维护的值
+
+			void apply(const Info& v) {
+				// 如何单点修改
+			}
+		};
+		Info operator+(const Info& a, const Info& b) {
+			Info c;
+			return c;
+		}
+	*/
 
 	template <class Info, class Tag>
 	class LazySegmentTree
 	{
-		/* 该模板可能在直接相加的情况下比较好用，区间替换可能会出大大小小问题，这里写出区间替换模板
-		*  警惕当前 tag 为 Tag() 的情况，即 Tag() 为空不更新
-		*  区间替换并求区间和板子
-			struct Tag {
-				ll newValue = 0;
-				bool f = 0;  // 是否进行替换
-				Tag() {};
-				Tag(ll newValue, bool f = 0) :newValue(newValue), f(f) {};
-				void apply(Tag t) {
-					if (t.f) { // 这里很重要，因为这个板子初始化的时候就会调用 tag，所以这里上个 f 作为保险
-						f = 1;
-						newValue = t.newValue;
-					}
-				}
-			};
-			struct Info {
-				ll value = 0;
-				Info() {};
-				Info(ll value) :value(value) {};
-				void apply(Tag t, int len) {
-					if (t.f)
-						value = t.newValue * len;
-				}
-			};
-			Info operator+(Info a, Info b) {
-				Info c;
-				c.value = a.value + b.value;
-				return c;
-			}
-
-			void solve(int CASE)
-			{
-				int n; cin >> n;
-				auto a = vector<Info>(n + 1, Info());
-				fa(i, 1, n) {
-					ll now; cin >> now;
-					a[i].now = now;
-				}
-
-				// 初始化的时候自动会调用所有 Tag
-				MT::LazySegmentTree<Info, Tag> sg(a);
-
-				// 查看每个值
-				fa(i, 1, n) {
-					cout << sg.query(i, i).value << ' ';
-				}
-				cout << endl;
-
-				int q; cin >> q;
-				while (q--) {
-					ll l, r, x; cin >> l >> r >> x;
-					sg.modifyRange(l, r, Tag(x, 1));
-
-					// 查看更新后的每个值
-					fa(i, 1, n)
-						cout << sg.query(i, i).value << ' ';
-					cout << endl;
-				}
-				return;
-			}
-		*/
 #define l(p) (p << 1)
 #define r(p) (p << 1 | 1)
 	protected:
@@ -831,26 +996,59 @@ namespace MyTools
 #undef l(p)
 #undef r(p)
 	};
+	/* Info 和 Tag
+		struct Tag {
+			Tag() {}
+			// Tag(...): is_init(0) {}
 
-	template <class T>
+			bool is_init = 1; // 初始化时不用 tag
+
+			// 要维护的tag
+
+			void apply(const Tag& t) {
+				// 父tag怎么传到子tag
+				if (not t.is_init) {
+					is_init = 0;
+
+				}
+			}
+		};
+		struct Info {
+			Info() {};
+
+			// 要维护的值
+
+			void apply(const Tag& t, int len) {
+				// tag怎么传到要维护的值
+				if (not t.is_init) {
+
+				}
+			}
+
+			void apply(const Info& v) {
+				// 如何单点修改
+
+			}
+		};
+		Info operator+(const Info& a, const Info& b) {
+			Info c;
+			return c;
+		}
+	*/
+
+	template <class T, const int N>
 	class List
 	{
-	private:
-		vector<int> l, r;
-		map<T, int> pos;
-		int cnt = 1, tail = 0;
-
 	public:
-		vector<T> value;
+		array<int, N> l, r;
+		int cnt = 1, tail = 0; // 时间戳、尾节点时间戳
+		map<T, int> pos;       // 值对应时间戳，需保证每个数只出现一次，位置下标从 1 开始
+		array<T, N> value;     // 时间戳对于值
+		array<int, N> id;      // 获取列表实际每个值的下标
 
-		List(int n = 2e5 + 10)
-		{ // 预留空间，默认2e6
-			value.assign(n * 10, 0);
-			l.assign(n * 10, 0);
-			r.assign(n * 10, 0);
-		}
+		List() {}
 
-		void remove(int idx)
+		void erase(int idx)
 		{
 			try
 			{
@@ -874,7 +1072,7 @@ namespace MyTools
 			value[cnt] = val;
 			pos[val] = cnt;
 
-			// 插入节点
+			// idx 位置后插入节点
 			l[cnt] = idx;
 			r[cnt] = r[idx];
 			l[r[idx]] = cnt;
@@ -888,13 +1086,23 @@ namespace MyTools
 			value[cnt] = val;
 			pos[val] = cnt;
 
-			// 插入节点
+			// 链表尾插入节点
 			l[cnt] = tail;
 			r[cnt] = r[tail];
 			l[r[tail]] = cnt;
 			r[tail] = cnt++;
 
 			tail++;
+		}
+
+		int next_id(int id) {
+			if (r[id] == 0)return -1;
+			return r[id];
+		}
+
+		int prev_id(int id) {
+			if (l[id] == 0)return -1;
+			return l[id];
 		}
 
 		void print_all()
@@ -905,9 +1113,20 @@ namespace MyTools
 				cout << value[i] << ' ';
 				k--;
 			}
+			cout << endl;
+		}
+
+		void init_id() {
+			// 计算列表实际每个值的下标
+			int k = tail;
+			int cur = 1;
+			for (int i = r[0]; k; i = r[i]) {
+				id[value[i]] = cur;
+				k--;
+				cur++;
+			}
 		}
 	};
-
 
 	template<const int N>
 	struct Log2Table {
@@ -1709,7 +1928,7 @@ namespace MyTools
 	class XorBase {
 		/**
 		* 线性基
-		* - 原序列中任意一个数都可以通过线性基里的一些数异或得到
+		* - [常用]原序列中任意一个数都可以通过线性基里的一些数异或得到 
 		* - 线性基里的任意数异或起来都不能得到 0
 		* - 线性基里的数的个数唯一，在满足以上性质的前提下，存最少的数
 		*/
@@ -1719,6 +1938,7 @@ namespace MyTools
 		bool flag = false;
 
 	public:
+		int rank = 0; // 秩/极大线性无关组大小，即有效向量/关键数的数量
 		XorBase() :a(70, 0) {};
 
 		void print() {
@@ -1743,7 +1963,7 @@ namespace MyTools
 			// 跟 check 函数很像
 			for (int i = MN; ~i; i--)
 				if (x & (1ll << i))
-					if (!a[i]) { a[i] = x; return; } // 线性基里没有 x，插入 x
+					if (!a[i]) { a[i] = x, rank++; return; } // 线性基里没有 x，插入 x
 					else x ^= a[i]; // 线性基里有 x
 			flag = true;
 		}
@@ -3150,21 +3370,27 @@ namespace MyTools
 	private:
 		struct TrieNode {
 			array<int, 2> children; // 指向孩子的 id
+			int cnt; // 记录经过该节点的数字个数
 			/* 可再添些变量，比如 区间查询问题用到的 边归属：int id； */
 			/* 本板子可以进行区间询问，添加 边归属：int id；后，修改插入和询问函数即可。  */
+
+			TrieNode() : children{ 0, 0 }, cnt(0) {}
 		};
 
 		vector<TrieNode> tr;
 		int newNode() { tr.push_back(TrieNode()); return ++nodeCnt; }
 
 		int MAX; 	      // MAX：数的最大二进制位数
-		int root = 1;
 		int nodeCnt = 1;
+		int root = 1;
+
 	public:
 		Trie01Vector(int MAX) :MAX(MAX), tr(2) {}
 
 		void insert(T num) {
 			int now = root;
+			tr[now].cnt++;
+
 			// 枚举二进制数位
 			for (int i = MAX; i >= 0; i--) {
 				bool bit = (num >> i) & 1; // 当前数位
@@ -3174,6 +3400,7 @@ namespace MyTools
 					tr[now].children[bit] = tmp;
 				}
 				now = tr[now].children[bit];
+				tr[now].cnt++;
 			}
 		}
 
@@ -3211,6 +3438,45 @@ namespace MyTools
 				}
 			}
 			return minXor;
+		}
+
+		void erase(T num) {
+			int now = root;
+			if (tr[now].cnt <= 0) return;
+			tr[now].cnt--;
+
+			for (int i = MAX; i >= 0; i--) {
+				bool bit = (num >> i) & 1;
+				if (tr[now].children[bit] == 0) return;
+
+				int nxt = tr[now].children[bit];
+				tr[nxt].cnt--;
+
+				if (tr[nxt].cnt == 0) {
+					// 注意：这里实际没有从vector中删除节点，只是标记为未使用
+					tr[now].children[bit] = 0;
+				}
+
+				now = nxt;
+			}
+		}
+
+		// 查询数字是否存在
+		bool contains(T num) {
+			int now = root;
+			for (int i = MAX; i >= 0; i--) {
+				bool bit = (num >> i) & 1;
+				if (tr[now].children[bit] == 0 || tr[tr[now].children[bit]].cnt <= 0) {
+					return false;
+				}
+				now = tr[now].children[bit];
+			}
+			return true;
+		}
+
+		// 获取当前Trie中的数字个数
+		int size() {
+			return tr[root].cnt;
 		}
 	};
 
@@ -3386,25 +3652,27 @@ namespace MyTools
 
 	tuple<int, vector<vector<int>>, vector<ll>, vector<int>> scc_shrink(int n, const vector<vector<int>>& g, const vector<ll>& a) {
 		/**
-		* 缩点板子
+		* 缩点板子，找全联通分量
 		* 传入：原图节点个数 n、原图 g、原图节点权值 a
 		* 返回：新图节点个数 scc、新图 ng、新图节点权值 na
-		* 缩点完毕后变成有向无环图，可能需要拓扑排序
-		*
+		* 
+		* - 缩点完毕后变成有向无环图，可能需要拓扑排序
+		* - 可能还要看一个缩点原来有哪些节点，具体看题面而定
+		* 
 		* 强连通：一张有向图的节点两两互相可达
 		* 强连通分量：极大的强连通子图
 		* Tarjan 算法：通过记录深搜遍历中每个节点的第一次访问时间来找到强连通分量的根以及其余节点
 		*/
 
-		var dfn = vector<int>(n + 1); // dfs序时间戳
-		var low = vector<int>(n + 1); // i 点能回溯到的最顶端祖先的 dfn
-		var ins = vector<int>(n + 1); // 是否在栈内
-		var bel = vector<int>(n + 1); // i 点属于第几个强连通分量
-		var st = stack<int>();        // 正在处理的栈
-		int time = 0;                 // 时间戳
-		int scc = 0;                  // 强连通分量个数，同时也是新图节点个数(单个节点也是个 scc)
+		auto dfn = vector<int>(n + 1); // dfs序时间戳
+		auto low = vector<int>(n + 1); // i 点能回溯到的最顶端祖先的 dfn
+		auto ins = vector<int>(n + 1); // 是否在栈内
+		auto bel = vector<int>(n + 1); // i 点属于第几个强连通分量
+		auto st = stack<int>();        // 正在处理的栈
+		int time = 0;                  // 时间戳
+		int scc = 0;                   // 强连通分量个数，同时也是新图节点个数(单个节点也是个 scc)
 
-		var tarjan = [&](var tarjan, int now)->void {
+		auto tarjan = [&](auto tarjan, int now)->void {
 			dfn[now] = low[now] = ++time;
 			st.push(now);
 			ins[now] = 1;
@@ -3429,83 +3697,336 @@ namespace MyTools
 				}
 			}
 			};
-		fa(i, 1, n) if (!dfn[i]) tarjan(tarjan, i);
+		for (int i = 1; i <= n; i++) if (!dfn[i]) tarjan(tarjan, i);
 
 
 		// 构建新有向图
-		var ng = vector<vector<int>>(scc + 1); // 缩点后的新图
-		var na = vector<ll>(scc + 1);          // 缩点后的新权值
-		var siz = vector<int>(scc + 1);        // 缩点后新节点包含了多少原节点(可选)
-		fa(now, 1, n) {
+		auto ng = vector<vector<int>>(scc + 1); // 缩点后的新图
+		auto na = vector<ll>(scc + 1);          // 缩点后的新权值
+		auto siz = vector<int>(scc + 1);        // 缩点后新节点包含了多少原节点(可选)
+		for (int now = 1; now <= n; now++) {
 			for (const int& to : g[now])
 				if (bel[to] != bel[now]) // 不在同一个 scc 内
-					ng[bel[now]].pb(bel[to]);
+					ng[bel[now]].push_back(bel[to]);
 			na[bel[now]] += a[now];
 			siz[bel[now]]++;
 		}
 
 		return make_tuple(scc, ng, na, siz);
 	}
-}
 
-namespace MT = MyTools;
-using Math = MT::Math<ll>;
-//using mint = MT::ModInt<998244353>;
+	template<typename T> 
+	T randint(T l, T r) {
+		// 随机整数
+		static std::mt19937_64 gen(std::random_device{}()); 
+		std::uniform_int_distribution<T> dist(l, r); 
+		return dist(gen); 
+	}
 
-/*
-// 懒标记线段树
-struct Tag {
-	Tag() {}
-	// is_init(0)
+	struct kruskal_edge {
+		ll u, v, w;
+	};
+	tuple<vector<vector<int>>, vector<ll>, vector<vector<int>>> kruskal_rebuildTree(int n, vector<kruskal_edge>& e) {
+		/**
+		* 克鲁斯卡尔重构树
+		* 是个二叉树，叶子节点是原图节点，非叶子节点是原图的边
+		* 传入：原图节点个数 n、边数组 e
+		* 返回：新图 g、新节点权值数组 val、倍增父节点数组 p
+		*
+		* - 查两点间最小瓶颈路问题：求从 u 到 v 的所有路径中，最大边权最小的那条路径的最大边权值，答案就是 LCA(u, v) 的点权。
+		* - “边权限制”下的连通性查询：查询仅经过边权不超过 k 的边，两点 u 和 v 能否连通。
+		*/
 
-	bool is_init = 1; // 初始化时不用 tag
+		// 并查集
+		int nn = 2 * n - 1; // 重构树一共 2n - 1 个节点
+		auto s = vector<int>(nn + 1);
+		for (int i = 1; i <= nn; i++)s[i] = i;
+		auto find = [&](auto find, int x)->int {
+			if (s[x] == x)return x;
+			return s[x] = find(find, s[x]);
+			};
+		sort(e.begin() + 1, e.end(), [](const kruskal_edge& a, const kruskal_edge& b)->bool {
+			return a.w < b.w;
+			});
 
-	// 要维护的tag
-
-	void apply(const Tag& t) {
-		// 父tag怎么传到子tag
-		if (not t.is_init) {
-			is_init = 0;
-
+		// 克鲁斯卡尔
+		auto g = vector<vector<int>>(nn + 1);
+		auto val = vector<ll>(nn + 1); // 新开节点(原图的边)的权值
+		auto p = vector<vector<int>>(nn + 1, vector<int>(30)); // 倍增父节点
+		int now = n;
+		fa(i, 1, (int)e.size() - 1) {
+			const auto& [u, v, w] = e[i];
+			int e1 = find(find, u);
+			int e2 = find(find, v);
+			if (e1 != e2) {
+				val[now] = w;
+				g[++now].push_back(e1), g[now].push_back(e2); // 建二叉树
+				s[e1] = now, s[e2] = now;
+				p[e1][0] = now, p[e2][0] = now; // 倍增父节点初始化
+				// 此处可能还需要进行倍增DP初始化：dp[e1/e2][0] = f(val[now]);
+				// 以及其它一维数组信息收集，如：sum[now] = sum[e1] + sum[e2];
+			}
 		}
+		return { g,val,p };
 	}
-};
-struct Info {
-	Info() {};
 
-	// 要维护的值
+	vector<int> cut_point(int n, const vector<vector<int>>& g) {
+		// 割点：在一个连通无向图中，如果某个顶点以及与其相关联的所有边，图的连通分量数量增加，那么这个顶点就是一个割点。
 
-	void apply(const Tag& t, int len) {
-		// tag怎么传到要维护的值
-		if (not t.is_init) {
+		auto dfn = vector<int>(n + 1);  // dfs序时间戳
+		auto low = vector<int>(n + 1);  // i 点能回溯到的最顶端祖先的 dfn，无向图要考虑能否绕过直接前驱
+		auto cnt = vector<bool>(n + 1); // 是否是割点
+		int time = 0;                   // 时间戳
 
+		auto tarjan = [&](auto tarjan, int now, int root)->void {
+			dfn[now] = low[now] = ++time;
+			int child = 0; // root 的子节点
+			for (const int& to : g[now]) {
+				if (!dfn[to]) {
+					tarjan(tarjan, to, root);
+					low[now] = min(low[now], low[to]);
+					if (low[to] >= dfn[now] and now != root)
+						// to 无法绕过 now 达到 now 的祖先
+						cnt[now] = 1;
+					if (now == root) child++;
+				}
+				low[now] = min(low[now], dfn[to]);
+			}
+			// 因为考虑到子节点的子节点能回来的特性，这里的子节点不是单纯的 root 子节点
+			// 子节点的子节点绕不回 root 节点的个数 child >= 2 时产生割点
+			if (child >= 2 and now == root)cnt[root] = 1;
+			};
+		for (int i = 1; i <= n; i++) if (!dfn[i]) tarjan(tarjan, i, i);
+
+		auto ans = vector<int>();
+		for (int i = 1; i <= n; i++)if (cnt[i])ans.push_back(i);
+		return ans;
+	}
+
+	vector<pair<int, int>> cut_edge(int n, const vector<vector<int>>& g) {
+		// 割边（桥）：在一个连通无向图中，如果删除某条边后，图的连通分量数量增加，那么这条边就是一个割边（桥）。
+
+		vector<int> dfn(n + 1);   // dfs序时间戳
+		vector<int> low(n + 1);   // 能回溯到的最早祖先的dfn
+		vector<pair<int, int>> bridges; 
+		int time = 0;
+
+		auto tarjan = [&](auto self, int u, int parent)->void {
+			dfn[u] = low[u] = ++time;
+			for (int v : g[u]) {
+				if (v == parent) continue;
+
+				if (!dfn[v]) {
+					self(self, v, u);
+					low[u] = min(low[u], low[v]);
+					// 判断桥：如果v无法通过其他边回溯到u或更早，则(u,v)是桥
+					if (low[v] > dfn[u]) {
+						bridges.push_back({ min(u, v), max(u, v) }); // 按小节点在前存储，避免重复
+					}
+				}
+				else low[u] = min(low[u], dfn[v]);
+			}
+			};
+
+		for (int i = 1; i <= n; i++) if (!dfn[i]) tarjan(tarjan, i, 0);
+		return bridges;
+	}
+
+	vector<vector<int>> bcc_point(int n, const vector<vector<int>>& g) {
+		/**
+		* 无向图点双连通分量：不包含割点的极大连通子图
+		* 
+		* - 可能还要进一步用并查集缩点，然后建树
+		*/
+
+		vector<int> dfn(n + 1);   // dfs序时间戳
+		vector<int> low(n + 1);   // 能回溯到的最早祖先的dfn
+		vector<bool> cut(n + 1, false);
+		stack<int> stk;
+		vector<vector<int>> bccs; // 存储所有点双连通分量
+		int time = 0;
+		int root = 0;
+
+		auto tarjan = [&](auto self, int u, int fa) -> void {
+			dfn[u] = low[u] = ++time;
+			stk.push(u);
+
+			// 根节点的特殊情况
+			if (u == root && g[u].empty()) {
+				bccs.push_back({ u });
+				return;
+			}
+
+			int child = 0;
+			for (int v : g[u]) {
+				if (v == fa) continue;
+
+				if (!dfn[v]) {
+					self(self, v, u);
+					low[u] = min(low[u], low[v]);
+
+					if (low[v] >= dfn[u]) {
+						child++;
+						if (u != root || child > 1) {
+							cut[u] = true;
+						}
+
+						// 发现一个点双连通分量
+						vector<int> bcc;
+						while (true) {
+							int top = stk.top();
+							stk.pop();
+							bcc.push_back(top);
+							if (top == v) break;
+						}
+						bcc.push_back(u);
+						bccs.push_back(bcc);
+					}
+				}
+				else {
+					low[u] = min(low[u], dfn[v]);
+				}
+			}
+			};
+
+		for (int i = 1; i <= n; i++) {
+			if (!dfn[i]) {
+				root = i;
+				tarjan(tarjan, i, 0);
+
+				// 处理根节点可能剩余的点
+				if (!stk.empty()) {
+					vector<int> bcc;
+					while (!stk.empty()) {
+						bcc.push_back(stk.top());
+						stk.pop();
+					}
+					bccs.push_back(bcc);
+				}
+			}
 		}
+
+		return bccs;
 	}
 
-	void apply(const Info& v) {
-		// 如何单点修改
+	vector<vector<int>> bcc_edge(int n, const vector<vector<int>>& g) {
+		/**
+		* 无向图边双连通分量：不包含桥的极大连通子图
+		*
+		* - 可能还要进一步用并查集缩点，然后建树
+		*/
 
+		vector<int> dfn(n + 1);   // dfs序时间戳
+		vector<int> low(n + 1);   // 能回溯到的最早祖先的dfn
+		vector<int> bcc_id(n + 1, 0); // 每个点所属的边双连通分量id
+		stack<int> stk;
+		vector<vector<int>> bccs; // 存储所有边双连通分量
+		int time = 0;
+		int bcc_cnt = 0;
+
+		auto tarjan = [&](auto self, int u, int fa) -> void {
+			dfn[u] = low[u] = ++time;
+			stk.push(u);
+
+			for (int v : g[u]) {
+				if (v == fa) continue;
+
+				if (!dfn[v]) {
+					self(self, v, u);
+					low[u] = min(low[u], low[v]);
+				}
+				else {
+					low[u] = min(low[u], dfn[v]);
+				}
+			}
+
+			// 如果u是边双连通分量的根
+			if (low[u] == dfn[u]) {
+				bcc_cnt++;
+				vector<int> bcc;
+				while (true) {
+					int top = stk.top();
+					stk.pop();
+					bcc_id[top] = bcc_cnt;
+					bcc.push_back(top);
+					if (top == u) break;
+				}
+				bccs.push_back(bcc);
+			}
+			};
+
+		for (int i = 1; i <= n; i++) {
+			if (!dfn[i]) {
+				tarjan(tarjan, i, 0);
+			}
+		}
+
+		/* 缩点后建树参考代码
+			int nn = bccs.size();
+			var s = vector<int>(n + 1);
+			fa(i, 0, nn - 1) {
+				for (int x : bccs[i])
+					s[x] = i + 1;
+			}
+
+			var ng = vector<vector<pll>>(nn + 1); // 缩点后的树
+			for (const var& [u, v, w] : e) {
+				if (s[u] != s[v]) { // 是桥
+					ng[s[u]].pb({ s[v],w });
+					ng[s[v]].pb({ s[u],w });
+				}
+			}
+
+			var dfs = [&](var dfs, int now, int fa)->void {
+				for (const var& [to, w] : ng[now]) {
+					if (to == fa)continue;
+					dfs(dfs, to, now);
+					siz[now] += siz[to] + 1;
+					if (siz[to] % 2 == 0)mn = min(mn, w);
+				}
+				};
+			dfs(dfs, 1, 0);
+		*/
+
+		return bccs;
 	}
-};
-Info operator+(const Info& a, const Info& b) {
-	Info c;
-	return c;
+
+	bool is_bipartite_graph(int n, const vector<vector<int>>& g) {
+		/**
+		* 染色法判断是否是二分图
+		*
+		* - 二分图一定不含奇环，可用做奇环检测
+		*/
+
+		var color = vector<short>(n + 1, -1);
+
+		auto bfs_check = [&](int st)->bool {
+			queue<int> q;
+			q.push(st);
+			color[st] = 0;
+
+			while (!q.empty()) {
+				int u = q.front();
+				q.pop();
+
+				for (int v : g[u]) {
+					if (color[v] == -1) {
+						color[v] = color[u] ^ 1;
+						q.push(v);
+					}
+					else if (color[v] == color[u]) {
+						return false;
+					}
+				}
+			}
+			return true;
+			};
+
+		fa(i, 1, n)
+			if (color[i] == -1 and !bfs_check(i))
+				return false;
+
+		return true;
+	}
 }
-
-// 线段树
-struct Info {
-	Info() {};
-
-	// 要维护的值
-
-	void apply(const Info& v) {
-		// 如何单点修改
-	}
-};
-Info operator+(const Info& a, const Info& b) {
-	Info c;
-	return c;
-}
-*/
-
 #endif
