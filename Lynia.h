@@ -90,7 +90,8 @@ namespace MyTools
 
 			目标：使得总时间复杂度在 O(n√n) 或 O(q√n) 范围内。
 
-			- 1e5 的题都可以想想能不能用根号分治优化，有时候会有奇效。
+			- 1e5 的题都可以想想能不能用根号分治优化，有时候会有奇效
+			- 注意可能出现的爆空间问题，阈值 B 的设定也在于空间大小 (256MB => 64e6 int 数组)
 		*/
 
 		/* [区间 dp]
@@ -298,17 +299,126 @@ namespace MyTools
 				- 一般式：gcd(a, b) = gcd(a OR b, |a - b|)
 				- 推广到：{
 					gcd(a, b, c, d) = gcd(a, |b - a|, |c - b|, |d - c|)
+						=> gcd(a, b, c, d) = gcd(a, |b - a|, |c - a|, |d - a|)
 					gcd(a, b, c, d) = gcd(|a - b|, |b - c|, |c - d|, d)
 				}
 
 			2. 辗转相除法
 				gcd(a, b) = gcd(a, b % a) 
+
+			3. gcd 题有时可以联想到分解因数，毕竟两数共有的最大因数就是 gcd
 		*/
 
-		/* [质数定理，质数间隔]
+		/* [质数定理：质数间隔]
 			- 小于 n 的质数个数 c(n) ~ n / ln(n)，即当 n 很大时，c(n) 约等于 n / ln(n)
 			- 平均间隔 ~ ln(n)，即当 n 很大时，相邻质数的平均间隔约等于 ln(n)，间隔并不会很远，如 n = 1e18 时，ln(n) = 41
 			- 最大间隔 ~ (ln(n)) ^ 2，即当 n 很大时，相邻质数的最大间隔约等于 (ln(n)) ^ 2，如果 n 较小，建议直接算
+		*/
+
+		/* [博弈论：SG函数]
+			想象成 Nim 游戏，也就是取石子游戏，给你 n 堆石子堆，交给两个人交替用多种方式取石子。
+
+			SG(x) == 0：先手必败
+			SG(x) != 0：先手必胜
+
+			单堆石子：SG(x) = mex{ SG(x 的后继状态) }
+			多堆石子(每堆石子都是一个独立的子游戏)：SG_total = SG(x1) ^ SG(x2) ^ ... ^ SG(xn)
+
+			对于经典 Nim 游戏 (多堆石子，每次可以取任意多的石子)：
+				单堆石子的SG函数：对于一堆数量为 x 的石子，SG(x) = x                            <==  SG(0) = 0, SG(1) = mex{ SG(0) } = 1, SG(2) = mex{ SG(0), SG(1) } = 2...
+				整个游戏的SG值：SG_total = SG(a1) ^ SG(a2) ^ ... ^ SG(an)，ai 为每堆石子数量
+		*/
+
+		/* [二维前缀和]
+		 
+			===== 初始化前缀和 =====
+
+			fa(i, 1, n)
+			fa(j, 1, m) {
+				// 继承上一轮
+				pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1];
+
+				// 加上当前贡献
+				pre[i][j] += a[i][j];
+			}
+
+
+			// 带 0 玩的情况下，直接把有 < 0 的项删掉就行 
+			fa(i, 0, n)
+			fa(j, 0, m) {
+				// 继承上一轮
+				if (i == 0 and j == 0)continue;
+				else if (i == 0)pre[i][j] = pre[i][j - 1];
+				else if (j == 0)pre[i][j] = pre[i - 1][j];
+				else pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1];
+
+				// 加上当前贡献
+				pre[i][j] += a[i][j];
+			}
+
+
+			===== 询问二维前缀和 =====
+
+			-- x, y, nx, ny --
+
+			(nx, ny)  (nx, y)
+			( x, ny)  ( x, y)
+
+			pre[x][y]
+			+ pre[nx - 1][ny - 1]
+			- pre[nx - 1][y] - pre[x][ny - 1]
+		*/
+
+		/* [三维前缀和]
+
+			===== 初始化前缀和 =====
+
+			fa(i, 1, n)
+			fa(j, 1, m)
+			fa(k, 1, q) {
+				// 继承上一轮
+			    pre[i][j][k] =
+					pre[i - 1][j][k] + pre[i][j - 1][k] + pre[i][j][k - 1]
+					+ pre[i - 1][j - 1][k - 1] 
+					- pre[i - 1][j - 1][k] - pre[i - 1][j][k - 1] - pre[i][j - 1][k - 1];
+
+				// 加上当前贡献
+				pre[i][j][k] += a[i][j][k];
+			}
+
+
+			// 带 0 玩的情况下，直接把有 < 0 的项删掉就行
+			fa(i, 0, n)
+			fa(j, 0, m)
+			fa(k, 0, q) {
+				// 继承上一轮
+				if (i == 0 and j == 0 and k == 0)continue;
+				else if (i == 0 and j == 0)pre[i][j][k] = pre[i][j][k - 1];
+				else if (i == 0 and k == 0)pre[i][j][k] = pre[i][j - 1][k];
+				else if (j == 0 and k == 0)pre[i][j][k] = pre[i - 1][j][k];
+				else if (i == 0)pre[i][j][k] = pre[i][j - 1][k] + pre[i][j][k - 1] - pre[i][j - 1][k - 1];
+				else if (j == 0)pre[i][j][k] = pre[i - 1][j][k] + pre[i][j][k - 1] - pre[i - 1][j][k - 1];
+				else if (k == 0)pre[i][j][k] = pre[i - 1][j][k] + pre[i][j - 1][k] - pre[i - 1][j - 1][k];
+				else {
+					pre[i][j][k] = 
+						pre[i - 1][j][k] + pre[i][j - 1][k] + pre[i][j][k - 1]
+						+ pre[i - 1][j - 1][k - 1]
+						- pre[i - 1][j - 1][k] - pre[i - 1][j][k - 1] - pre[i][j - 1][k - 1];
+				}
+
+				// 加上当前贡献
+				pre[i][j][k] += a[i][j][k]; 
+			}
+
+
+			===== 询问三维前缀和 =====
+
+			-- x, y, z, nx, ny, nz --
+
+			pre[x][y][z]
+			- pre[nx - 1][y][z] - pre[x][ny - 1][z] - pre[x][y][nz - 1]
+			- pre[nx - 1][ny - 1][nz - 1] 
+			+ pre[nx - 1][ny - 1][z] + pre[nx - 1][y][nz - 1] + pre[x][ny - 1][nz - 1]
 		*/
 	};
 
@@ -449,26 +559,20 @@ namespace MyTools
 			return ans;
 		}
 		static string decimalChange(ll x, ll num) {
-			if (num <= 1 or num >= 10)static_assert("位数错误");
-			string ans;
-			ll now = 63;
-			bool zero = 1;
-			while (now >= 0) {
-				ll base = 1;
-				bool ok = 0;
-				fa(i, 1, now) {
-					base *= num;
-					if (x < base) {
-						ok = 1;
-						break;
-					}
-				}
-				now--;
-				if (ok and zero)continue;
-				zero = 0;
+			// 十进制转 num 进制
 
-				ans.pb(char(x / base + '0'));
-				x %= base;
+			if (num <= 1 || num >= 10) {
+				throw std::invalid_argument("进制数必须在2-9之间");
+			}
+			if (x == 0) return "0";
+
+			string ans;
+			ll temp = x;
+			// 不断除以目标进制，取余数
+			while (temp > 0) {
+				ll remainder = temp % num;      // 当前位的值
+				ans = char(remainder + '0') + ans;  // 添加到结果前面
+				temp /= num;                    // 更新商
 			}
 			return ans;
 		}
@@ -2126,7 +2230,7 @@ namespace MyTools
 		int tot = 0;    // 记录节点个数，并作为版本编号
 		vector<tree>t;  // 存树各个的节点 
 		int len;        // 离散化后的数的个数\
-								也是值域大小 (可不开离散化，纯靠动态开点即可)
+												也是值域大小 (可不开离散化，纯靠动态开点即可)
 
 		int build(int l, int r) { // 初始化建树
 			int node = ++tot;
@@ -2299,8 +2403,36 @@ namespace MyTools
 				};
 			return query(query, 1, len, L, R, v);
 		}
-	};
 
+		//// 主席树区间查询实例参考
+		//vector<pair<int, int>> query_frequent_numbers(int L, int R, int B) {
+		//	/**
+		//	* 查询区间 [L, R] 中出现次数超过 B 的数及其出现次数
+		//	* L, R 为线段树版本，要传入 L - 1
+		//	* 返回 vector<pair<值域下标, 出现次数>>
+		//	*/
+		//	vector<pair<int, int>> res;
+
+		//	auto dfs = [&](auto dfs, int u, int v, int l, int r) {
+		//		ll sum = t[v].sum - t[u].sum;
+
+		//		if (sum <= B) return;
+
+		//		if (l == r) {
+		//			// 到达叶子节点，如果出现次数 > B，加入结果
+		//			if (sum > B)res.emplace_back(l, sum);
+		//			return;
+		//		}
+
+		//		int mid = l + r >> 1;
+		//		dfs(dfs, t[u].l, t[v].l, l, mid);
+		//		dfs(dfs, t[u].r, t[v].r, mid + 1, r);
+		//		};
+
+		//	dfs(dfs, root[L], root[R], 1, len);
+		//	return res;
+		//}
+	};
 
 	template<typename T = long long>
 	class Frac
@@ -3654,7 +3786,7 @@ namespace MyTools
 		/**
 		* 缩点板子，找全联通分量
 		* 传入：原图节点个数 n、原图 g、原图节点权值 a
-		* 返回：新图节点个数 scc、新图 ng、新图节点权值 na
+		* 返回：新图节点个数 scc、新图 ng (注意：没有去重)、新图节点权值 na
 		* 
 		* - 缩点完毕后变成有向无环图，可能需要拓扑排序
 		* - 可能还要看一个缩点原来有哪些节点，具体看题面而定
@@ -3961,7 +4093,7 @@ namespace MyTools
 			}
 		}
 
-		/* 缩点后建树参考代码
+		/* 缩点后建树参考代码，记得留意是否需要去重
 			int nn = bccs.size();
 			var s = vector<int>(n + 1);
 			fa(i, 0, nn - 1) {
@@ -3982,7 +4114,6 @@ namespace MyTools
 					if (to == fa)continue;
 					dfs(dfs, to, now);
 					siz[now] += siz[to] + 1;
-					if (siz[to] % 2 == 0)mn = min(mn, w);
 				}
 				};
 			dfs(dfs, 1, 0);
