@@ -1,6 +1,255 @@
 ﻿#ifndef LYNIA_H
 #define LYNIA_H
 
+/*
+MyTools 命名空间完整目录：
+
+	other 类算法注释：
+		- 状压二进制选取枚举子集
+		- 数学常见数列求和公式、无穷级数、概率期望、组合数学
+		- 容斥原理公式
+		- 三分查找（二分式三分）
+		- 二维偏序
+		- 根号分治（阈值分块）
+		- 单调栈
+		- 区间DP
+		- LIS（最长递增子序列）
+		- 二进制拆分背包
+		- bitset优化
+		- 换根DP
+		- 树上倍增
+		- 期望计算
+		- XOR异或操作
+		- 异或哈希
+		- gcd相关定理
+		- exgcd与裴蜀定理
+		- 质数定理：质数间隔
+		- 博弈论SG函数
+		- 二维前缀和
+		- 三维前缀和
+
+	Math<T> 数学工具：
+		- gcd/lcm - 最大公约数/最小公倍数
+		- exgcd - 扩展欧几里得
+		- lowbit - 最低位1
+		- fastPow - 快速幂
+		- inv - 逆元
+		- highPrecisionAdd - 高精度加法
+		- factorsAll - 预处理所有数的因子
+		- factorNumbers - 求一个数的所有因子
+		- primeFactorsMAP/SET - 质因数分解
+		- C - 组合数计算
+		- decimalChange - 进制转换
+		- division_block - 整除分块
+		- prefixSumFactorNumber - 因数个数前缀和
+		- fastGL - 预处理GCD表
+		- PreInv - 预处理逆元表
+
+	Combinatorics 组合数学：
+		- C - 组合数计算
+		- lucas - 卢卡斯定理
+		- Stirling2 - 第二类斯特林数
+
+	EulerPrime 质数处理：
+		- isPrime - 质数判断
+		- primeFactorsMAP/VEC - 加速质因数分解
+		- factorNumbers - 加速因数分解
+		- segmentSieve - 区间筛
+
+	SegmentTree<Info> 线段树：
+		- modify - 单点修改
+		- query - 区间查询
+
+	LazySegmentTree<Info, Tag> 懒标记线段树：
+		- modify - 单点修改
+		- modifyRange - 区间修改
+		- query - 区间查询
+
+	List<T, N> 链表：
+		- erase - 删除节点
+		- insert - 插入节点
+		- push_back - 尾部插入
+		- next_id/prev_id - 前后驱查询
+
+	ST<T> ST表：
+		- queryMin/Max - 最值查询
+		- queryOR/AND - 按位或/与查询
+		- queryGCD/LCM - GCD/LCM查询
+
+	BitTree<T> 树状数组：
+		- update - 单点更新
+		- getsum - 前缀和查询
+		- queryRange - 区间查询
+		- lower_bound/upper_bound - 树状数组二分
+
+	Manacher 回文处理：
+		- 构造函数 - 计算最长回文
+
+	DoubleHashString 双哈希：
+		- get - 子串哈希值
+		- lcp - 最长公共前缀
+		- string_cmp - 字符串字典序比较
+
+	SingleHashString 单哈希：
+		- get - 子串哈希值
+		- lcp - 最长公共前缀
+		- string_cmp - 字符串字典序比较
+
+	LCA 最近公共祖先：
+		- lca - 求最近公共祖先
+		- dis - 两点距离
+
+	ModInt<T> 模数类：
+		- 各种运算符重载 - 模运算
+
+	KMP 字符串匹配：
+		- kmp - 模式串匹配
+
+	ACAutomaton AC自动机：
+		- insert - 插入模式串
+		- getFail - 构建失败指针
+		- query - 多模式匹配
+
+	MinCostMaxFlow<T> 费用流：
+		- minCostMaxFlow - 最小费用最大流
+
+	XorBase 线性基：
+		- insert - 插入数字
+		- check - 检查存在性
+		- qmax/qmin - 最大最小异或值
+		- query - 第k小异或值
+
+	fast<T> 快速IO：
+		- in - 快速输入
+		- out/outln - 快速输出
+
+	PersistentWeightSegmemtTree 主席树：
+		- update - 版本更新
+		- query_k_min/max - 第k小/大查询
+		- query_bigger/smaller_num - 值域统计
+		- query_last_version - 单版本区间查询
+
+	Frac<T> 分数类：
+		- 各种运算符 - 分数运算
+		- to_inv - 转模逆元
+
+	Trie01Vector/Array 01字典树：
+		- insert - 插入数字
+		- find_max_xor - 最大异或值
+		- find_min_xor - 最小异或值
+		- erase - 删除数字
+		- contains - 存在性检查
+
+	Trie 字典树：
+		- insert - 插入字符串
+		- startsWith - 前缀查询
+		- search - 完整词查询
+
+	Dsu 并查集：
+		- find - 查找根节点
+		- uoion - 合并集合
+
+	图论算法：
+		- scc_shrink - 强连通分量缩点
+		- kruskal_rebuildTree - 克鲁斯卡尔重构树
+		- cut_point - 割点
+		- cut_edge - 割边
+		- bcc_point - 点双连通分量
+		- bcc_edge - 边双连通分量
+		- is_bipartite_graph - 二分图判断
+		- diameter_of_tree - 树的直径
+		- centroid_of_tree - 树的重心
+		- centroid_decomposition - 点分治
+
+	工具函数：
+		- randint - 随机数生成
+*/
+
+/*
+Geo 几何计算完整目录：
+
+	基础函数：
+		- sgn(x) 浮点数符号
+		- cmp(x, y) 浮点数比较
+		- radians(degrees) 角度转弧度
+		- point_point_dist(A, B) 两点距离
+		- point_point_dist2(A, B) 两点距离平方
+		- dot(A, B) 点积计算
+		- cross(A, B) 叉积计算
+		- vector_len(A) 向量长度
+		- vector_len2(A) 向量长度平方
+		- vector_vector_angle(A, B) 两向量夹角
+		- vector_vector_angle_directed(A, B) 两向量夹角（带方向）
+		- vector_rotate(A, rad) 向量旋转
+		- vector_normal(A) 单位法向量
+		- area_parallelogram 平行四边形面积
+		- area_triangle 三角形面积
+		- vector_vector_parallel 向量平行判断
+		- vector_vector_relation 向量位置关系
+		- vector_vector_angle_type 向量夹角类型
+
+	点线关系：
+		- point_line_relation 点和直线关系
+		- point_segment_relation 点和线段关系
+		- point_line_dis 点到直线距离
+		- point_line_proj 点在直线投影
+		- point_line_symmetry 点关于直线对称点
+		- point_segment_dis 点到线段距离
+
+	线线关系：
+		- line_line_relation 两直线关系
+		- line_line_cross_point 两直线交点
+		- segment_segment_is_cross 两线段相交判断
+
+	多边形：
+		- point_polygon_relation 点和多边形关系
+		- polygon_perimeter 多边形周长
+		- polygon_area 多边形面积
+		- polygon_center_point 多边形重心
+		- convex_hull 凸包算法
+
+	圆形：
+		- point_circle_relation 点和圆关系
+		- line_circle_relation 直线和圆关系
+		- segment_circle_relation 线段和圆关系
+		- line_cross_circle_points 直线圆交点
+		- line_polygon_cross_points 直线多边形交点
+		- circle_arc_area 扇形面积
+		- circle_area 圆面积
+
+	排序算法：
+		- angle_polar_sort_atan2 atan2极角排序
+		- angle_polar_sort_cross 叉积极角排序
+
+	旋转卡壳：
+		- farthest_point_to_point_dis 最远点对距离
+		- farthest_point_to_point_dis2 最远点对距离平方
+
+	几何类：
+	Point<T> 点类：
+		- polar_angle 极角计算
+		- len/len2 向量长度
+		- quadrant 象限判断
+		- 运算符重载（+ - * / ^ == < >）
+
+	Line<T> 直线类：
+		- 多种构造函数
+		- is_no_k 垂直线判断
+		- k 斜率计算
+		- b 截距计算
+
+	Polygon<T> 多边形类：
+		- perimeter 周长
+		- area/area2 面积
+		- area_directed/area2_directed 有向面积
+		- winding_order 环绕顺序判断
+		- polar_angle_sort_atan2/cross 极角排序
+
+	Circle<T> 圆类：
+		- area 圆面积
+		- arc_area 扇形面积
+*/
+
 #include <iostream>
 #include <exception>
 #include <algorithm>
@@ -80,6 +329,40 @@ namespace MyTools
 			=> 计算不满足 A、B、C 任何条件的元素数量
 		*/
 
+		/* [三分 (二分式三分)]
+			int ternary_search_max(int l, int r) {
+				while (l < r) {
+					int mid = (l + r) / 2;
+					if (f(mid) < f(mid + 1)) {
+						l = mid + 1;
+					} else {
+						r = mid;
+					}
+				}
+				return l; // 最大值点
+			}
+
+			int ternary_search_min(int l, int r) {
+				while (l < r) {
+					int mid = (l + r) / 2;
+					if (f(mid) > f(mid + 1)) {
+						l = mid + 1;
+					} else {
+						r = mid;
+					}
+				}
+				return l; // 最小值点
+			}
+		*/
+
+		/* [偏序]
+			1. 二维偏序
+				给定若干个元素，每个元素有两个属性 (a, b)，需要统计满足 a_i < a_j 且 b_i < b_j（或其他不等关系）的元素对 (i, j) 的数量。
+
+				- 常见变体也就是改改大于小于等其它不等关系
+				- 常见解法为排序后树状数组求逆序对
+		*/
+
 		/* [根号分治(阈值分块)]
 			根据某个阈值（通常是 √n 或类似的量级），将数据或操作分成“小块”和“大块”，分别采用不同的策略处理：
 				“小块”（如 x ≤ B）：
@@ -94,16 +377,23 @@ namespace MyTools
 			- 注意可能出现的爆空间问题，阈值 B 的设定也在于空间大小 (256MB => 64e6 int 数组)
 		*/
 
+		/* [单调栈]
+			维护一个单调递减/递增栈，每次都把 i 放入栈，栈顶为最大/最小值
+			- 为序列每个元素寻找其左/右边第一个比它大/小的元素
+			- 计算序列每个元素作为最大/小值的区间范围
+			- 根据以上性质，针对具有单调性的问题进行 dp 优化
+		*/
+
 		/* [区间 dp]
 			关键在于 dp 状态的定义是否包括一个区间，比如 dp[i][j]：只处理 [i, j] 区间的最佳答案
-			发现题目可能是 dp，且可以使用区间来还定义状态时，就可以套区间 dp 板子 
+			发现题目可能是 dp，且可以使用区间来还定义状态时，就可以套区间 dp 板子
 			复杂度可以为 O(N ^ 2) 或 O(N ^ 3)，复杂度取决于 dp 转移是否需要中间点，也就是是否需要两区间合并
 
 			O(N ^ 2)：
-				fa(len, 2, n)                 // 区间长度 
+				fa(len, 2, n)                 // 区间长度
 					fa(i, 1, n - len + 1) {   // 起点
 						int j = i + len - 1;  // 终点
-					} 
+					}
 
 			O(N ^ 3)：
 				fa(len, 2, n)                 // 区间长度
@@ -113,23 +403,35 @@ namespace MyTools
 
 						}
 					}
-			
+
 			注意：一般区间长度 len 为 1 时需要自己初始化
 		*/
 
-		/* [异或哈希]
-			异或哈希的精髓就是把原来的数赋个随机值，让 a XOR b 的值在值域上唯一，一般在 ull 范围内取随机数赋值。
-			MT::randint<ull>(0, ULLONG_MAX)
-			- 集合判等/判重问题
-			- 偶数次出现问题
-			- 路径/子树判重问题，节点分配哈希值
-		*/
+		/* [LIS]
 
-		/* [单调栈]
-			维护一个单调递减/递增栈，每次都把 i 放入栈，栈顶为最大/最小值
-			- 为序列每个元素寻找其左/右边第一个比它大/小的元素
-			- 计算序列每个元素作为最大/小值的区间范围
-			- 根据以上性质，针对具有单调性的问题进行 dp 优化
+			// 动态规划 O(n ^ 2)
+			// 最长单调增子序列
+			fa(i, 1, n)
+				fa(j, 1, i - 1)
+				if (a[i] > a[j])
+					dp[i] = max(dp[i], dp[j] + 1);
+			ans = *max_element(dp + 1, dp + n + 1);
+
+			// 二分+单调栈 O(nlogn)
+			// 最长单调不增子序列
+			int cnt = 0;
+			st[++cnt] = a[1];
+			fa(i, 2, n) {
+				if (a[i] <= st[cnt])st[++cnt] = a[i];
+				else {
+					int id = lower_bound(st + 1, st + 1 + cnt, a[i], greater<>()) - st;
+					st[id] = a[i];
+				}
+			}
+			ans = cnt;
+
+
+			计算 LIS 数量：反向算性质相反的子序列数量即可。
 		*/
 
 		/* [二进制拆分背包]
@@ -231,14 +533,11 @@ namespace MyTools
 
 		*/
 
-		/* [exgcd 与 裴蜀定理]
-			exgcd 最基础的用法是用来求 ax + by = gcd(a, b) 的整数解
-		*/
-
 		/* [树上倍增]
 			- 有唯一父子关系的题都能用(一个点能到达的下一个点是唯一确定的)，如：树、基环树(n个点n条边)
 			- 要考虑树上一条链的贡献的情况，且链可能是基环树上的环
-			
+			- 结合 LCA 来算两节点间的 dp，即算 merge_func( dp(i, lca(i, j)), dp(j, lca(i, j)) )
+			- 更多板子详见 LCA 部分
 
 			// 初始化倍增
 			var p = Vec2<int>(n + 1, 31);  // 倍增父节点表
@@ -262,35 +561,41 @@ namespace MyTools
 			}
 		*/
 
-		/* [LIS]
-		
-			// 动态规划 O(n ^ 2)
-			// 最长单调增子序列
-			fa(i, 1, n)
-				fa(j, 1, i - 1)
-				if (a[i] > a[j])
-					dp[i] = max(dp[i], dp[j] + 1);
-			ans = *max_element(dp + 1, dp + n + 1);
+		/* [期望]
+			- 大部分都可以推公式解决，难度在于找出最好推式子的 E(dp) 的状态，得多找多试几种 E
+			- 有些是期望 dp 题，是推 E 的转移方程，通常从后往前
+			- 可能用到二分或三分(凹凸函数)
 
-			// 二分+单调栈 O(nlogn)
-			// 最长单调不增子序列
-			int cnt = 0;
-			st[++cnt] = a[1];
-			fa(i, 2, n) {
-				if (a[i] <= st[cnt])st[++cnt] = a[i];
-				else {
-					int id = lower_bound(st + 1, st + 1 + cnt, a[i], greater<>()) - st;
-					st[id] = a[i];
-				}
-			}
-			ans = cnt;
+			推公式例题：
+				- (几何分布) 升级装备，每次升级花费 1 单位时间，成功概率 p，失败则装备等级不变，求升 1 级所需期望时间。
+					- E=p⋅1+(1−p)(1+E)
+					- E=1+(1−p)E
+					- E=1/p
 
-
-			计算 LIS 数量：反向算性质相反的子序列数量即可。
+				- (加了限制的几何分布) 每次尝试做一个任务，耗时 a，成功的概率为 p，但做完后不能立刻知道成功与否，必须等 b 时间统一验证，一旦验证到成功就停止，求期望总时间。
+					- E=p(a+b)+(1−p)(a+b+E)
+					- E=a+b+(1−p)E
+					- pE=a+b
+					- E=(a+b)/p
 		*/
 
-		/* [期望]
-			大部分期望题都可以推公式解决，使用递推或直接O(1)，难度在于找出最好推式子的 E(dp) 的状态，得多找多试几种 E。
+		/* [XOR]
+			1. 异或交换法
+				a = a ^ b
+				b = a ^ b
+				a = a ^ b
+
+			2. a ^ b = c, a ^ c = b, b ^ c = a
+
+			3. a - b <= a ^ b <= a + b
+		*/
+
+		/* [异或哈希]
+			异或哈希的精髓就是把原来的数赋个随机值，让 a XOR b 的值在值域上唯一，一般在 ull 范围内取随机数赋值。
+			MT::randint<ull>(0, ULLONG_MAX)
+			- 集合判等/判重问题
+			- 偶数次出现问题
+			- 路径/子树判重问题，节点分配哈希值
 		*/
 
 		/* [gcd]
@@ -307,6 +612,10 @@ namespace MyTools
 				gcd(a, b) = gcd(a, b % a) 
 
 			3. gcd 题有时可以联想到分解因数，毕竟两数共有的最大因数就是 gcd
+		*/
+
+		/* [exgcd 与 裴蜀定理]
+			exgcd 最基础的用法是用来求 ax + by = gcd(a, b) 的整数解
 		*/
 
 		/* [质数定理：质数间隔]
@@ -355,6 +664,20 @@ namespace MyTools
 				// 加上当前贡献
 				pre[i][j] += a[i][j];
 			}
+
+
+			===== 二维差分 ===== 
+
+			// 对以下矩阵每个位置 += 1
+			// (x, y)             (x, y + leny - 1)
+			// (x + lenx - 1, y)  (x + lenx - 1, y + leny - 1)
+
+			cnt[x][y]++;
+			cnt[x + lenx][y]--;
+			cnt[x][y + leny]--;
+			cnt[x + lenx][y + leny]++;
+
+			fa(i, 1, n)fa(j, 1, m)cnt[i][j] += cnt[i - 1][j] + cnt[i][j - 1] - cnt[i - 1][j - 1];
 
 
 			===== 询问二维前缀和 =====
@@ -419,6 +742,227 @@ namespace MyTools
 			- pre[nx - 1][y][z] - pre[x][ny - 1][z] - pre[x][y][nz - 1]
 			- pre[nx - 1][ny - 1][nz - 1] 
 			+ pre[nx - 1][ny - 1][z] + pre[nx - 1][y][nz - 1] + pre[x][ny - 1][nz - 1]
+		*/
+
+		/* [py 随机数]
+		
+			1. 随机生成一棵具有n个节点的树，返回边列表
+
+				def generate_random_tree(n):
+					if n <= 1:
+						return []
+    
+					nodes = list(range(1, n + 1))
+					random.shuffle(nodes)
+    
+					edges = []
+					for i in range(1, n):
+						parent = random.randint(0, i - 1)
+						u = nodes[parent]
+						v = nodes[i]
+						if u > v:
+							u, v = v, u
+						edges.append((u, v))
+    
+					return edges
+
+				# 写入文件
+				with open("example.txt", "w") as f:
+					f.write(f"{n}\n")
+					for u, v in edges:
+						f.write(f"{u} {v}\n")
+
+
+			2. 生成一个长度为 n 的随机排列
+
+				def generate_permutation(n):
+					perm = list(range(1, n + 1))
+					random.shuffle(perm)
+					return perm
+
+
+			3. 生成一个长度为 n 的随机字符串
+				
+				import string
+
+				def random_string(n, mode='both'):
+					"""
+					生成长度为 n 的随机字符串
+
+					参数:
+					n: 字符串长度
+					mode: 字符类型
+						- 'lower': 仅小写字母
+						- 'upper': 仅大写字母
+						- 'both': 大小写字母都包含
+						- 'digits': 仅数字
+						- 'all': 字母+数字
+					"""
+
+					if mode == 'lower':
+						chars = string.ascii_lowercase
+					elif mode == 'upper':
+						chars = string.ascii_uppercase
+					elif mode == 'both':
+						chars = string.ascii_letters
+					elif mode == 'digits':
+						chars = string.digits
+					elif mode == 'all':
+						chars = string.ascii_letters + string.digits
+					else:
+						raise ValueError("mode 必须是 'lower', 'upper', 'both', 'digits' 或 'all'")
+
+					return ''.join(random.choices(chars, k=n))
+			
+
+			4. 生成随机图
+				
+				def generate_random_graph(n, m, directed=False, connected=False):
+					"""
+					生成随机图
+
+					Args:
+						n: 节点数 (1到n)
+						m: 边数
+						directed: 是否为有向图
+						connected: 是否保证连通
+
+					Returns:
+						边列表 [(u, v), ...]
+					"""
+
+					edges = set()
+
+					# 保证连通性：先构建生成树
+					if connected and n > 1:
+						nodes = list(range(1, n + 1))
+						random.shuffle(nodes)
+						for i in range(1, n):
+							u = nodes[i-1]
+							v = nodes[i]
+							edges.add((u, v) if u < v or directed else (min(u, v), max(u, v)))
+
+					# 添加剩余边
+					while len(edges) < m:
+						u = random.randint(1, n)
+						v = random.randint(1, n)
+						if u == v:
+							continue
+						edge = (u, v) if directed else (min(u, v), max(u, v))
+						edges.add(edge)
+
+					return list(edges)[:m]
+
+				def generate_random_weighted_graph(n, m, directed=False, connected=False, weight_range=(1, 10)):
+					"""
+					生成带权随机图
+					"""
+
+					edges = generate_random_graph(n, m, directed, connected)
+					return [(u, v, random.randint(*weight_range)) for u, v in edges]
+		*/
+
+		/* [启发式合并]
+			启发式合并是一种优化技巧，主要用于解决需要频繁合并集合的问题，可以把 O(n^2) 优化到 O(nlogn)
+
+			- 核心思想是：在合并两个集合时，总是将较小的集合合并到较大的集合中；
+						在树上的操作时，每次找重儿子就行，合并路径就相当于在重链上移动
+			- 可能用到 set、map、并查集
+
+			CF600E 部分参考代码：
+				struct node {
+					ll mx_sum, mx;
+					map<int, ll>mp;
+					vector<int>ve;
+					void init(int x) {
+						mp[x]++;
+						ve.pb(x);
+						mx = 1;
+						mx_sum = x;
+					}
+					void add(int x) {
+						if (mp[x] == mx) {
+							mx++;
+							mx_sum = x;
+						}
+						else if (mp[x] == mx - 1)mx_sum += x;
+						mp[x]++;
+						ve.pb(x);
+					}
+					int size() const {
+						return ve.size();
+					}
+				};
+
+				var dfs = [&](var dfs, int now, int fa)->void {
+					if (g[now].size() == 1 and now != 1) {
+						s[now].init(col[now]);
+						ans[now] = col[now];
+						return;
+					}
+					int mx = 0, mx_id = 0;
+					for (int to : g[now]) {
+						if (to == fa)continue;
+						dfs(dfs, to, now);
+						if (s[to].size() > mx) {
+							mx = s[to].size();
+							mx_id = to;
+						}
+					}
+					s[now] = move(s[mx_id]);
+					s[now].add(col[now]);
+					for (int to : g[now]) {
+						if (to == fa or to == mx_id)continue;
+						for (int x : s[to].ve)s[now].add(x);
+					}
+					ans[now] = s[now].mx_sum;
+				};
+		*/
+
+		/* [分层图]
+			将原图复制成 k+1 层（k 是状态维度），每层表示不同的状态，层与层之间通过状态转移边连接。
+
+			题目通常会在基础图遍历上增加额外限制条件，如：
+			- 最多可以使用 k 次特殊能力（如：跳过边、改变边权等）
+			- 有状态依赖的移动（如：拿到钥匙后才能通过门）
+
+			分层的方式有很多，按编号分层、或者开多维数组；
+			为了防止 TLE，可能需要动态分层、滚动数组、多次 dij 等方式实现空间优化，减少一次跑图节点数。
+		*/
+	
+		/* [多源最短路]
+			将所有起点同时加入队列初始层，一次 BFS 即可求出所有位置到最近起点的距离，O(n + m) 或 O(n)
+
+			典型问题：
+			- 多个火源同时蔓延，求每个位置被火覆盖的最早时间
+			- 有多个起点，求这些起点中的两两最近距离 (同时把最短路和次短路跑完，每个起点的次短路即是该起点到最近起点的距离)
+
+			当然边权不全是 1，那就是用多源 dij 了
+		*/
+
+		/* [曼哈顿距离]
+			曼哈顿距离: dis = |x1 - x2| + |y1 - y2|
+			切比雪夫距离：dis = max(|x1 - x2|, |y1 - y2|)
+			曼哈顿距离的转换：
+				因为 |x1 - x2| = max(x1 - x2, x2 - x1)，所以 
+				dis = max({ (x1 - x2) + (y1 - y2), (x1 - x2) - (y1 - y2), ... }) 4 项
+				dis = max({ (x1 + y1) + (x2 - x2), (x1 - y1) - (x2 - y2), ... }) 4 项
+				因此只需要处理所有点的 (x + y) 和 (x - y) 即可
+			
+			原坐标系的曼哈顿距离转切比雪夫距离：(x, y) => (x + y, x - y)
+			原坐标系的切比雪夫距离转曼哈顿距离：(x, y) => ((x + y) / 2, (x - y) / 2)
+		*/
+
+		/* [贪心 or tricks]
+			1. [l_i, r_i] 区间题，有可能需要按 r_i 升序排
+				- 以 R 升序排序，本质上就是在每一步都选择当前“最快结束”的区间
+				- 如：给定若干区间 [l_i, r_i]，求出最多能选择多少个互不重叠的区间。
+
+			2. 带(很可能是时间)顺序的问题可以考虑《倒序》能不能解决，有时候倒序能提供一个新视角
+				- 如：有一系列任务，每个任务有一个截止时间 d_i 和收益 p_i。如何选择任务使得总收益最大？
+
+			3. 贡献法，即考虑每一个元素的贡献而不是每一个整体
+				- 求一个数组所有子数组的 (最大值 - 最小值) 之和。不从“子数组”的角度去枚举，而是从“每个元素”的角度去思考：对于最终答案，这个元素贡献了多少？
 		*/
 	};
 
@@ -697,7 +1241,7 @@ namespace MyTools
 	*		dp[i] += mp[i];
 	*		// 枚举 i 在 [1, 1e7] 的倍数 j
 	*		// 质数倍数枚举法 O(loglogW)
-	*		// 本质是优化 dp 转移
+	*		// 本质是优化 dp 转移 
 	*		for (int j = 0; j < er.cnt and i * er.prime[j] <= N; j++) {
 	*			int k = i * er.prime[j];
 	*			dp[k] = max(dp[k], dp[i]);
@@ -745,7 +1289,7 @@ namespace MyTools
 					m /= p;
 					mp[p]++;
 				}
-				if (isPrime(m) or m == 1) break;
+				if (m <= MAXN and isPrime(m) or m == 1) break;
 			}
 			if (m > 1)
 				mp[m]++;
@@ -769,6 +1313,8 @@ namespace MyTools
 					}
 					ve.push_back({ p, cnt });
 				}
+
+				if (m <= MAXN and isPrime(m) or m == 1) break;
 			}
 			if (m > 1)
 				ve.push_back({ m, 1 });
@@ -1425,7 +1971,7 @@ namespace MyTools
 	class Manacher
 	{
 	public:
-		vector<int> lengths; // 以每个字符为中心的最长长度回文串的半径
+		vector<int> lengths; // 以每个字符为中心的最长长度回文串的半径，即 lengths[i] => [l, i, r] 回文串的长度
 		int max_length = -1; // 最大回文长度
 
 		Manacher(string str)
@@ -1657,52 +2203,99 @@ namespace MyTools
 	{
 	public:
 		vector<int> depth;
-		vector<vector<int>> f; // f[x][i]即x的第2^i个祖先 (31是倍增用的，最大跳跃为2^30)
-		// vector<int>w; 树上边差分没准能用上，w[to] 表示 to 到其 fa 节点的边
+		vector<vector<int>> f;    // f[x][i]即x的第2^i个祖先 (31是倍增用的，最大跳跃为2^30)
+		//vector<vector<ll>> dp;  // 查询两节点间信息用
 
-		LCA(int n, vector<vector<int>>& e)
+		LCA(int n, vector<vector<pll>>& e)
 		{
 			f.assign(n + 10, vector<int>(31));
 			depth.assign(n + 10, 0);
-			// w.assign(n + 10, 0);
+			//dp.assign(n + 10, vector<ll>(31, -1));
 
-			init(1, 0, e); // 邻接表
+			init(1, 0, e);
 		}
 
 		int lca(int x, int y)
 		{
-			if (depth[x] < depth[y])
-				swap(x, y);
-			// 后面进行x节点默认比y节点深
+			// 默认 x 节点比 y 节点深
+			if (depth[x] < depth[y])swap(x, y);
+
+			// 将 x 节点提到跟 y 节点一个深度
 			for (int i = 29; i >= 0; i--)
 				if (depth[x] - (1 << i) >= depth[y])
 					x = f[x][i];
-			if (x == y)
-				return x; // 特判：y就是原本x的祖宗
+
+			if (x == y) return x; // 特判：y 就是原本 x 的祖宗
+
+			// 说明还没找到祖宗，更新 a、b 后接着跳
 			for (int i = 29; i >= 0; i--)
-				if (f[x][i] != f[y][i]) // 说明还没找到祖宗，更新a、b后接着跳
+				if (f[x][i] != f[y][i])
 					x = f[x][i], y = f[y][i];
+
 			return f[x][0];
 		}
 
 		int dis(int x, int y) {
+			// x y 两节点距离
+
 			int f = lca(x, y);
 			return depth[x] - depth[f] + depth[y] - depth[f];
 		}
 
+		tuple<ll, ll> query(int x, int y) {
+			/**
+			* 查询 x y 两节点路径上的聚合信息 (dp)
+			* 写法跟 lca 函数一样
+			* 参考代码已注释，具体修改看题意
+			*/
+
+			// 默认 x 节点比 y 节点深
+			if (depth[x] < depth[y])swap(x, y);
+
+			// 将 x 节点提到跟 y 节点一个深度
+			ll res = -1;
+			for (int i = 29; i >= 0; i--)
+				if (depth[f[x][i]] >= depth[y]) {
+					//res = max(res, dp[x][i]);
+					x = f[x][i];
+				}
+
+			// 特判：y 就是原本 x 的祖宗
+			if (x == y)return { res, x };
+
+			// 说明还没找到祖宗，更新 a、b 后接着跳
+			for (int i = 29; i >= 0; i--)
+				if (f[x][i] != f[y][i]) {
+					//res = max({ res, dp[x][i], dp[y][i] });
+					x = f[x][i], y = f[y][i];
+				}
+
+			//res = max({ res, dp[x][0], dp[y][0] });
+
+			return { res, f[x][0] };
+		}
+
 	private:
-		void init(int now, int fa, vector<vector<int>>& e)
+		void init(int now, int fa, vector<vector<pll>>& e)
 		{
-			depth[now] = depth[fa] + 1;
-			f[now][0] = fa;                                 // 第一个祖先
-			for (int i = 1; (1 << i) <= depth[now]; i++) // 求now的各个祖先
-				f[now][i] = f[f[now][i - 1]][i - 1];
-			for (int to : e[now])
-			{ // now这个的点的祖先都找完了，dfs处理别的点
-				if (to == fa)
-					continue;
+			depth[now] = depth[fa] + 1;  // 更新深度
+			f[now][0] = fa;              // 第一个祖先
+			for (int i = 1; (1 << i) <= depth[now]; i++) {
+				f[now][i] = f[f[now][i - 1]][i - 1]; // 求 now 的各个祖先
+
+				// 求 now->2^i祖先 的信息
+				// 合并信息：now->2^(i-1)祖先 和 2^(i-1)祖先->2^i祖先
+				//dp[now][i] = max(dp[now][i - 1], dp[f[now][i - 1]][i - 1]);
+			}
+
+			for (const var& [to, w] : e[now])
+			{
+				if (to == fa)continue;
+
+				// 初始化从 now 到 父节点 的信息
+				//dp[to][0] = w; 
+
 				init(to, now, e);
-				// w[to] = e[i].w;
 			}
 		}
 	};
@@ -4159,5 +4752,301 @@ namespace MyTools
 
 		return true;
 	}
+
+	tuple<
+		int,         // 终点(最远点)
+		ll,          // 最远距离
+		vector<pii>  // 直径路径
+	>
+		diameter_of_tree(
+			int n,                        // 原图节点个数
+			const vector<vector<pll>>& g, // 原图
+			int f,                        // 起点
+			const bool& need_path = 0     // 是否需要直径路径
+		)
+	{
+		/**
+		* 树的直径
+		* 
+		* 性质：  
+		*	1. 直径的两端点一定是叶子节点。  
+		*
+		*	2. 对于树中任意一点，距离它最远的点一定是某条直径的一个端点。
+		* 
+		*	3. 若一棵树存在多条直径，则这些直径必定相交于一点，且该交点是所有直径的公共中点。
+		*
+		*	4. 若有两棵树，第一棵树的直径端点为 (u, v)，第二棵树的直径端点为 (x, y)，用一条边将两棵树连接后，新树的直径端点必然在 ({u, v, x, y}) 中取两个点。  
+		*	证明：
+		*		若新直径不是原来任意一棵树的直径，则它必须跨越连接边。
+		*		此时，新直径在每棵树内的部分一定是该树中距离连接点最远的点，而这样的点必然是原直径的端点。  
+		*
+		*	5. 在一棵树中，若在某个节点上接一个叶子节点，则至多改变原直径的一个端点。  
+		*	证明：
+		*		假设在节点 x 下接叶子节点 y，新直径变为 (u, y)，原直径为 (a, b)。
+		*		那么有 dis(u, y) = dis(u, x) + 1 > dis(a, b)。
+		*       若 dis(u, x) < dis(a, b)，则不等式不成立；
+		*		若 dis(u, x) = dis(a, b)，则说明 (u, x) 已经是原树的一条直径，符合结论。  
+		*/
+
+		var path = vector<pii>();
+		var suf = vector<int>();
+		if (need_path)suf.resize(n + 1);
+
+		var dfs = [&](var dfs, int now, int fa)->pll {
+			var res = pll{ now, 1 }; // { 节点，now 到整个子树的最远距离 }
+			for (const var& [to, w] : g[now]) {
+				if (to == fa)continue;
+				var tmp = dfs(dfs, to, now);
+				tmp.py += w; // now 到 to 子树的最远距离
+				if (tmp.py > res.py) {
+					if (need_path)suf[now] = to;
+					res = tmp;
+				}
+			}
+			return res;
+			};
+
+		var res = dfs(dfs, f, 0);
+
+		if (need_path) {
+			int now = f;
+			while (suf[now]) {
+				path.pb({ now, suf[now] });
+				now = suf[now];
+			}
+		}
+
+		return { res.px, res.py, path };
+	}
+
+	int centroid_of_tree(int n, const vector<vector<int>>& g) {
+		/**
+		* 树的重心
+		*
+		* 性质：
+		*	1. 树的重心如果不唯一，则至多有两个，且这两个重心相邻；
+		*	   且删去它们的连边后，树将变为两个大小相同的连通分量。
+		*
+		*	2. 一个点是重心, 以这个点为根，它的每个子树的大小，都不会超过整个树大小的一半
+		*
+		*	3. 树中所有点到某个点的距离和中，到重心的距离和是最小的;
+		*	   如果有两个重心，那么到它们的距离和一样。更进一步，距离和最小与是重心等价
+		*
+		*	4. 如果一个树增添或删去一个叶子，则整个树的同一个重心最多移动一个节点
+		*
+		*	5. 通过连接一条端点分别在两个树的边，来将两个树合并成一个，那么新的重心肯定是在原来这两个树的重心的路径上
+		*
+		*
+		* 注意：若要多次求重心(点分治)，建议把函数内的都掏出来，防止多次刷新 siz/mxsiz 数组
+		*/
+
+		int root = 0;                   // 重心
+		var siz = vector<int>(n + 1);   // i 子树大小
+		var mxsiz = vector<int>(n + 1); // i 的每个子树大小的最大值
+
+		var getroot = [&](var getroot, int now, int fa)->void {
+			// 每次遍历整个树的时候都不用刷新 siz/mxsiz 数组，因为每次都会更新
+			siz[now] = 1; mxsiz[now] = 0;
+
+			for (int to : g[now]) {
+				if (to == fa)continue;
+				getroot(getroot, to, now);
+				siz[now] += siz[to];                   // 计算 now 作为子树的大小
+				mxsiz[now] = max(mxsiz[now], siz[to]); // 找 now 的每个子树大小的最大值
+			}
+
+			// 所有子树，包括父节点的
+			mxsiz[now] = max(mxsiz[now], n - siz[now]);
+
+			// 看看当前是不是重心
+			// 要满足 now 的最大子树的大小不能超过 root 的最大子树的大小
+			if (mxsiz[now] < mxsiz[root])root = now;
+			};
+
+		getroot(getroot, 1, 0);
+		return root;
+	}
+
+	void centroid_decomposition(int n, vector<vector<int>>& g) {
+		/**
+		* 点分治
+		* - 主要用于处理树上的路径问题(如：枚举计算两点对距离，即计算两点对到重心的距离)
+		* - 核心思想是通过重心划分子连通块，从而将树平均分割成若干互不影响的子问题，复杂度为 O(nlogn)。
+		*
+		* 注意：本模板不完整，请自行补充或作为参考
+		*/
+
+		// 获取重心
+		int root = 0;                   // 重心
+		int now_n = n;                  // 当前子树的大小，因为重心一直会变，原重心会被删，所以得加上这个
+		var siz = vector<int>(n + 1);   // i 的每个子树的大小
+		var mxsiz = vector<int>(n + 1); // i 的每个子树的大小的最大值
+		var vis = vector<bool>(n + 1);  // 存哪些点已经当过重心用了
+		mxsiz[0] = 1e9;                 // 找重心用，随便设个最大值
+
+		// 找重心
+		var getroot = [&](var getroot, int now, int fa)->void {
+			// 每次遍历整个树的时候都不用刷新 siz/mxsiz 数组，因为每次都会更新
+			siz[now] = 1; mxsiz[now] = 0;
+
+			for (int to : g[now]) {
+				if (to == fa or vis[to])continue;
+				getroot(getroot, to, now);
+				siz[now] += siz[to];                   // 计算 now 作为子树的大小
+				mxsiz[now] = max(mxsiz[now], siz[to]); // 找 now 的每个子树大小的最大值
+			}
+
+			// 所有子树，包括父节点的
+			mxsiz[now] = max(mxsiz[now], now_n - siz[now]);
+
+			// 看看当前是不是重心
+			// 要满足 now 的最大子树的大小不能超过 root 的最大子树的大小
+			if (mxsiz[now] < mxsiz[root])root = now;
+			};
+
+		var cal = [&](var cal, int now)->void {
+			// 自行补充从重心 now 遍历子树，vis 到的不能再遍历
+
+			};
+
+		var dfs = [&](var dfs, int now)->void {
+			vis[now] = 1;
+			cal(cal, now); // now 是重心，以重心开始遍历整个子树
+
+			// 对子树进行分治
+			for (int to : g[now]) {
+				if (vis[to])continue;
+				now_n = siz[to]; // 分治子树，子树的大小，找重心用
+				root = 0;        // 更新重心
+				mxsiz[0] = 1e9;  // 更新重心用
+				getroot(getroot, to, now); // 找重心
+				dfs(dfs, to);
+			}
+			};
+
+		getroot(getroot, 1, 0);
+		dfs(dfs, root);
+
+		return;
+	}
+
+	template<const int N>
+	class Matrix {
+		/**
+		* 矩阵快速幂优化 dp
+		* 
+		*	已推出 dp 转移方程：f[i] = cal(f[i - 1])，该方程只在乎上一维；
+		*	且 n 过大导致 O(n) 过不了时，考虑使用矩阵快速幂优化至 O(logn)。
+		*
+		*	将转移方程构造成矩阵连乘形式，即可套用快速幂：
+		*		ans[i][1, n] = base[n, n] * ans[i - 1][1, n]
+		*
+		*	需要对 答案矩阵 ans 的第一项、系数矩阵 base 进行初始化
+		*/
+
+	public:
+		array<array<ll, N + 1>, N + 1> mat;
+
+		Matrix() {
+			for (int i = 0; i <= N; i++)
+				for (int j = 0; j <= N; j++)
+					mat[i][j] = 0;
+		}
+
+		Matrix operator* (const Matrix& x) {
+			// 矩阵乘法
+			Matrix ret;
+			for (int i = 0; i <= (1 << n) - 1; i++)
+				for (int j = 0; j <= (1 << n) - 1; j++)
+					for (int k = 0; k <= (1 << n) - 1; k++) {
+						ret.mat[i][j] += mat[i][k] * x.mat[k][j];
+
+						// 视情况可以进行修改，比如算和上一轮求和最大的:
+						//		ret.mat[i][j] = max(ret.mat[i][j], mat[i][k] + x.mat[k][j]);
+					}
+			return ret;
+		}
+
+		Matrix ksm(ll k) {
+			Matrix res, base;
+			res.init_ans();
+			base.init_base();
+
+			while (k) {
+				if (k & 1)res = res * base;
+				base = base * base;
+				k >>= 1;
+			}
+			return res;
+		}
+
+	private:
+		void init_ans() {
+			// 初始化第一项答案矩阵
+			// 答案矩阵默认一维，全排在 [1][...]
+
+		}
+
+		void init_base() {
+			// 初始化系数矩阵
+			// 系数矩阵默认二维，注意 mat 赋值时可能需要 i j 互换 
+
+		}
+	};
+
+	// 自定义哈希
+	struct custom_hash {
+		static uint64_t splitmix64(uint64_t x) {
+			x += 0x9e3779b97f4a7c15;
+			x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+			x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+			return x ^ (x >> 31);
+		}
+
+		// long long
+		size_t operator()(uint64_t x) const {
+			static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+			return splitmix64(x + FIXED_RANDOM);
+		}
+
+		// pair<long, long>
+		size_t operator()(pair<uint64_t, uint64_t> x) const {
+			static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+			return splitmix64(x.first + (x.second << 32) + FIXED_RANDOM);
+		}
+
+		//// 通用 pair 版本
+		//template <typename T1, typename T2>
+		//size_t operator()(const std::pair<T1, T2>& p) const {
+		//	static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+		//	auto h1 = (*this)(p.first);
+		//	auto h2 = (*this)(p.second);
+		//	return splitmix64(h1 + splitmix64(h2 + FIXED_RANDOM));
+		//}
+
+		// 通用 tuple 版本
+		template <typename T1, typename T2, typename T3>
+		size_t operator()(const std::tuple<T1, T2, T3>& t) const {
+			static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+			auto h1 = (*this)(std::get<0>(t));
+			auto h2 = (*this)(std::get<1>(t));
+			auto h3 = (*this)(std::get<2>(t));
+			return splitmix64(h1 + splitmix64(h2 + splitmix64(h3 + FIXED_RANDOM)));
+		}
+
+		// string 版本
+		size_t operator()(const std::string& s) const {
+			static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+			uint64_t hash = FIXED_RANDOM;
+			for (char c : s)hash = splitmix64(hash + static_cast<uint8_t>(c));
+			return hash;
+		}
+
+		//// 通用版本，支持任意类型
+		//template <typename T>
+		//size_t operator()(const T& val) const {
+		//	return (*this)(std::hash<T>{}(val));
+		//}
+	};
 }
 #endif
