@@ -1,255 +1,6 @@
 ﻿#ifndef LYNIA_H
 #define LYNIA_H
 
-/*
-MyTools 命名空间完整目录：
-
-	other 类算法注释：
-		- 状压二进制选取枚举子集
-		- 数学常见数列求和公式、无穷级数、概率期望、组合数学
-		- 容斥原理公式
-		- 三分查找（二分式三分）
-		- 二维偏序
-		- 根号分治（阈值分块）
-		- 单调栈
-		- 区间DP
-		- LIS（最长递增子序列）
-		- 二进制拆分背包
-		- bitset优化
-		- 换根DP
-		- 树上倍增
-		- 期望计算
-		- XOR异或操作
-		- 异或哈希
-		- gcd相关定理
-		- exgcd与裴蜀定理
-		- 质数定理：质数间隔
-		- 博弈论SG函数
-		- 二维前缀和
-		- 三维前缀和
-
-	Math<T> 数学工具：
-		- gcd/lcm - 最大公约数/最小公倍数
-		- exgcd - 扩展欧几里得
-		- lowbit - 最低位1
-		- fastPow - 快速幂
-		- inv - 逆元
-		- highPrecisionAdd - 高精度加法
-		- factorsAll - 预处理所有数的因子
-		- factorNumbers - 求一个数的所有因子
-		- primeFactorsMAP/SET - 质因数分解
-		- C - 组合数计算
-		- decimalChange - 进制转换
-		- division_block - 整除分块
-		- prefixSumFactorNumber - 因数个数前缀和
-		- fastGL - 预处理GCD表
-		- PreInv - 预处理逆元表
-
-	Combinatorics 组合数学：
-		- C - 组合数计算
-		- lucas - 卢卡斯定理
-		- Stirling2 - 第二类斯特林数
-
-	EulerPrime 质数处理：
-		- isPrime - 质数判断
-		- primeFactorsMAP/VEC - 加速质因数分解
-		- factorNumbers - 加速因数分解
-		- segmentSieve - 区间筛
-
-	SegmentTree<Info> 线段树：
-		- modify - 单点修改
-		- query - 区间查询
-
-	LazySegmentTree<Info, Tag> 懒标记线段树：
-		- modify - 单点修改
-		- modifyRange - 区间修改
-		- query - 区间查询
-
-	List<T, N> 链表：
-		- erase - 删除节点
-		- insert - 插入节点
-		- push_back - 尾部插入
-		- next_id/prev_id - 前后驱查询
-
-	ST<T> ST表：
-		- queryMin/Max - 最值查询
-		- queryOR/AND - 按位或/与查询
-		- queryGCD/LCM - GCD/LCM查询
-
-	BitTree<T> 树状数组：
-		- update - 单点更新
-		- getsum - 前缀和查询
-		- queryRange - 区间查询
-		- lower_bound/upper_bound - 树状数组二分
-
-	Manacher 回文处理：
-		- 构造函数 - 计算最长回文
-
-	DoubleHashString 双哈希：
-		- get - 子串哈希值
-		- lcp - 最长公共前缀
-		- string_cmp - 字符串字典序比较
-
-	SingleHashString 单哈希：
-		- get - 子串哈希值
-		- lcp - 最长公共前缀
-		- string_cmp - 字符串字典序比较
-
-	LCA 最近公共祖先：
-		- lca - 求最近公共祖先
-		- dis - 两点距离
-
-	ModInt<T> 模数类：
-		- 各种运算符重载 - 模运算
-
-	KMP 字符串匹配：
-		- kmp - 模式串匹配
-
-	ACAutomaton AC自动机：
-		- insert - 插入模式串
-		- getFail - 构建失败指针
-		- query - 多模式匹配
-
-	MinCostMaxFlow<T> 费用流：
-		- minCostMaxFlow - 最小费用最大流
-
-	XorBase 线性基：
-		- insert - 插入数字
-		- check - 检查存在性
-		- qmax/qmin - 最大最小异或值
-		- query - 第k小异或值
-
-	fast<T> 快速IO：
-		- in - 快速输入
-		- out/outln - 快速输出
-
-	PersistentWeightSegmemtTree 主席树：
-		- update - 版本更新
-		- query_k_min/max - 第k小/大查询
-		- query_bigger/smaller_num - 值域统计
-		- query_last_version - 单版本区间查询
-
-	Frac<T> 分数类：
-		- 各种运算符 - 分数运算
-		- to_inv - 转模逆元
-
-	Trie01Vector/Array 01字典树：
-		- insert - 插入数字
-		- find_max_xor - 最大异或值
-		- find_min_xor - 最小异或值
-		- erase - 删除数字
-		- contains - 存在性检查
-
-	Trie 字典树：
-		- insert - 插入字符串
-		- startsWith - 前缀查询
-		- search - 完整词查询
-
-	Dsu 并查集：
-		- find - 查找根节点
-		- uoion - 合并集合
-
-	图论算法：
-		- scc_shrink - 强连通分量缩点
-		- kruskal_rebuildTree - 克鲁斯卡尔重构树
-		- cut_point - 割点
-		- cut_edge - 割边
-		- bcc_point - 点双连通分量
-		- bcc_edge - 边双连通分量
-		- is_bipartite_graph - 二分图判断
-		- diameter_of_tree - 树的直径
-		- centroid_of_tree - 树的重心
-		- centroid_decomposition - 点分治
-
-	工具函数：
-		- randint - 随机数生成
-*/
-
-/*
-Geo 几何计算完整目录：
-
-	基础函数：
-		- sgn(x) 浮点数符号
-		- cmp(x, y) 浮点数比较
-		- radians(degrees) 角度转弧度
-		- point_point_dist(A, B) 两点距离
-		- point_point_dist2(A, B) 两点距离平方
-		- dot(A, B) 点积计算
-		- cross(A, B) 叉积计算
-		- vector_len(A) 向量长度
-		- vector_len2(A) 向量长度平方
-		- vector_vector_angle(A, B) 两向量夹角
-		- vector_vector_angle_directed(A, B) 两向量夹角（带方向）
-		- vector_rotate(A, rad) 向量旋转
-		- vector_normal(A) 单位法向量
-		- area_parallelogram 平行四边形面积
-		- area_triangle 三角形面积
-		- vector_vector_parallel 向量平行判断
-		- vector_vector_relation 向量位置关系
-		- vector_vector_angle_type 向量夹角类型
-
-	点线关系：
-		- point_line_relation 点和直线关系
-		- point_segment_relation 点和线段关系
-		- point_line_dis 点到直线距离
-		- point_line_proj 点在直线投影
-		- point_line_symmetry 点关于直线对称点
-		- point_segment_dis 点到线段距离
-
-	线线关系：
-		- line_line_relation 两直线关系
-		- line_line_cross_point 两直线交点
-		- segment_segment_is_cross 两线段相交判断
-
-	多边形：
-		- point_polygon_relation 点和多边形关系
-		- polygon_perimeter 多边形周长
-		- polygon_area 多边形面积
-		- polygon_center_point 多边形重心
-		- convex_hull 凸包算法
-
-	圆形：
-		- point_circle_relation 点和圆关系
-		- line_circle_relation 直线和圆关系
-		- segment_circle_relation 线段和圆关系
-		- line_cross_circle_points 直线圆交点
-		- line_polygon_cross_points 直线多边形交点
-		- circle_arc_area 扇形面积
-		- circle_area 圆面积
-
-	排序算法：
-		- angle_polar_sort_atan2 atan2极角排序
-		- angle_polar_sort_cross 叉积极角排序
-
-	旋转卡壳：
-		- farthest_point_to_point_dis 最远点对距离
-		- farthest_point_to_point_dis2 最远点对距离平方
-
-	几何类：
-	Point<T> 点类：
-		- polar_angle 极角计算
-		- len/len2 向量长度
-		- quadrant 象限判断
-		- 运算符重载（+ - * / ^ == < >）
-
-	Line<T> 直线类：
-		- 多种构造函数
-		- is_no_k 垂直线判断
-		- k 斜率计算
-		- b 截距计算
-
-	Polygon<T> 多边形类：
-		- perimeter 周长
-		- area/area2 面积
-		- area_directed/area2_directed 有向面积
-		- winding_order 环绕顺序判断
-		- polar_angle_sort_atan2/cross 极角排序
-
-	Circle<T> 圆类：
-		- area 圆面积
-		- arc_area 扇形面积
-*/
-
 #include <iostream>
 #include <exception>
 #include <algorithm>
@@ -295,6 +46,15 @@ namespace MyTools
 		/* [状压] 二进制选取枚举子集 
 			for (int subset = mask; subset; subset = (subset - 1) & mask) {
 				// 处理subset
+			}
+
+			// 枚举 mask 的所有超集（在 n 位范围内）
+			int compl = (~mask) & ((1 << n) - 1);  // mask 的补集
+			for (int submask = compl; ; submask = (submask - 1) & compl) {
+				int supermask = mask | submask;  // 当前超集
+				// 处理 supermask
+
+				if (submask == 0) break;
 			}
 
 			fa(t, 1, k) {
@@ -407,160 +167,6 @@ namespace MyTools
 			注意：一般区间长度 len 为 1 时需要自己初始化
 		*/
 
-		/* [LIS]
-
-			// 动态规划 O(n ^ 2)
-			// 最长单调增子序列
-			fa(i, 1, n)
-				fa(j, 1, i - 1)
-				if (a[i] > a[j])
-					dp[i] = max(dp[i], dp[j] + 1);
-			ans = *max_element(dp + 1, dp + n + 1);
-
-			// 二分+单调栈 O(nlogn)
-			// 最长单调不增子序列
-			int cnt = 0;
-			st[++cnt] = a[1];
-			fa(i, 2, n) {
-				if (a[i] <= st[cnt])st[++cnt] = a[i];
-				else {
-					int id = lower_bound(st + 1, st + 1 + cnt, a[i], greater<>()) - st;
-					st[id] = a[i];
-				}
-			}
-			ans = cnt;
-
-
-			计算 LIS 数量：反向算性质相反的子序列数量即可。
-		*/
-
-		/* [二进制拆分背包]
-			n 种物品，每种物品有 m 个，重量为 w，价值为 v，转成 nlogn 个物品，然后 01 背包操作
-
-			// 原物品：最多根号 N 种，根号 N 个
-			//		=> 
-			// 新物品 根号 N * logN 个
-			var h = MT::map_to_vector(yuan); // 原物品 { 物品重量 w：物品个数 }
-			var ve = vector<int>();          // 二进制拆分后新物品 { 物品新重量 nw：个数为 1 } 
-			fa(i, 0, (int)h.size() - 1) {
-				var[x, y] = h[i];
-				for (int j = 1; j <= y; j <<= 1) { // 枚举物品个数
-					y -= j;
-					ve.pb(j * x);
-				}
-				if (y)ve.pb(y * x); // 存在余数
-			}
-
- 			// 01 背包
-			var dp = vector<bool>(n + 1);
-			dp[0] = 1;
-			for (const var& x : ve)
-				fb(i, n, x)
-				dp[i] = dp[i] || dp[i - x];
-		*/
-
-		/* [bitset]
-			比整数 (最多 64 位) 存的长，比 bool 数组算的快 (对整个 bitset 操作时，自带 /64 常数)
-			- 布尔 DP 问题
-			- 集合交并等处理问题
-
-			成员函数：
-				reset()：初始化全 0
-				set()：初始化全 1
-				any()：有 1 则 true
-				none()：无 1 则 false
-				flip()：整个 bitset 按位取反
-				count()：返回 1 的个数
-
-				_Find_first(), _Find_next()：
-					for (int pos = bs._Find_first(); pos < bs.size(); pos = bs._Find_next(pos)) {
-						// 遍历每个有 1 的位置
-					}
-
-
-			优化 bool 背包：
-
-				优化前：O(n * m)
-					dp[0] = 1;
-					fa(i, 1, n)
-						fb(j, W, w[i])
-							dp[j] |= dp[j - w[i]];
-
-				优化后：O(n * m / 64)
-					dp[0] = 1;
-					fa(i, 1, n)
-						dp |= dp << w[i]; // 一次移位即可计算所有背包容量的情况
-		*/
-
-		/* [换根 dp]
-			- 题目要求输出每个点为根的答案
-			- 计算答案时，必须考虑到节点上方的贡献
-
-
-			~  三种换根方法  ~
-			
-			1. 直接 down 数组公式推导，比较简单的情况。
-
-
-			2. 用 up/down 数组，并用 multiset/bitset 数组 mp[u][v] 辅助。
-
-				第一次 dfs，后根遍历(全部子节点递归完后)，计算 down 数组；
-				第二次 dfs，先根遍历(全部子节点递归前 或 单个子节点递归前)，计算 up 数组。
-				此方法较为通用，但复杂度较高。
-
-				up 数组可开个二维数组 mp[N][N] (可通过哈希表加速) 求出
-					=> mp[u][v]：u 的所有子树 (除了 v 子树) 的答案 (如：各子节点的集合等)
-						=> 用前后缀算
-						=> 全算了再减掉子树
-					=> up[now] = F( mp[u][v] + up[fa] ); (F 函数代表这样之后还得进行处理，如：bitset 要 <<= 1)
-					=> 当然可以再优化成一维的 mp[v]，如：multiset<int> mp[N];
-
-
-			3. 只用一个 multiset 数组 dp。
-				=> 要能明确 dp 里存了哪些答案，所以用 multiset。
-
-				只用一个数组的话，要求 dp[now]: 以 now 为根节点的整个树的答案，不分上面下面。
-
-				第一次 dfs: 直接后根遍历，按 down 数组的方式计算；
-				第二次 dfs: 
-					=> 在枚举到 now-to 时，now 子树撤销来自 to 子树的贡献，相当于砍掉 now-to 连边;
-					=> (可选，取决于答案如何更新)撤销完所有来自 to 子树的贡献后，再求一遍 now 子树的答案(如最值什么的)；
-					=> 重新更新 to 子树的答案：
-						=> 撤销 to 子树之前的答案，把 now 看成 to、to 看成 now，建 to-now 连边，更新 dp；
-						=> 更新完后，此时 dp 已经变成了以 to 为根的整个树的答案；
-					=> (注意)拆了 now-to 更新答案？还是建完 to-now 连边更新答案？看题意决定；
-					=> 子树 dfs 完后，now 子树的撤销全部还原。
-
-		*/
-
-		/* [树上倍增]
-			- 有唯一父子关系的题都能用(一个点能到达的下一个点是唯一确定的)，如：树、基环树(n个点n条边)
-			- 要考虑树上一条链的贡献的情况，且链可能是基环树上的环
-			- 结合 LCA 来算两节点间的 dp，即算 merge_func( dp(i, lca(i, j)), dp(j, lca(i, j)) )
-			- 更多板子详见 LCA 部分
-
-			// 初始化倍增
-			var p = Vec2<int>(n + 1, 31);  // 倍增父节点表
-			var dp = Vec2<pll>(n + 1, 31); // 从节点 i 开始，向上跳跃 2 ^ j 步的路径上的信息
-			fa(j, 1, 30) {
-				fa(i, 1, n) {
-					p[i][j] = p[p[i][j - 1]][j - 1];
-					// f 函数根据题意分析
-					dp[i][j] = f(dp[i][j - 1], dp[p[i][j - 1]][j - 1]);
-				}
-			}
-
-			// 查询倍增
-			int now; // 当前节点
-			fb(i, 30, 0) {
-				// 从大到小检查就行
-				if (满足题目条件 and p[now][i]) {
-					
-					now = p[now][i]; // 跳到下一个节点
-				}
-			}
-		*/
-
 		/* [期望]
 			- 大部分都可以推公式解决，难度在于找出最好推式子的 E(dp) 的状态，得多找多试几种 E
 			- 有些是期望 dp 题，是推 E 的转移方程，通常从后往前
@@ -636,112 +242,6 @@ namespace MyTools
 			对于经典 Nim 游戏 (多堆石子，每次可以取任意多的石子)：
 				单堆石子的SG函数：对于一堆数量为 x 的石子，SG(x) = x                            <==  SG(0) = 0, SG(1) = mex{ SG(0) } = 1, SG(2) = mex{ SG(0), SG(1) } = 2...
 				整个游戏的SG值：SG_total = SG(a1) ^ SG(a2) ^ ... ^ SG(an)，ai 为每堆石子数量
-		*/
-
-		/* [二维前缀和]
-		 
-			===== 初始化前缀和 =====
-
-			fa(i, 1, n)
-			fa(j, 1, m) {
-				// 继承上一轮
-				pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1];
-
-				// 加上当前贡献
-				pre[i][j] += a[i][j];
-			}
-
-
-			// 带 0 玩的情况下，直接把有 < 0 的项删掉就行 
-			fa(i, 0, n)
-			fa(j, 0, m) {
-				// 继承上一轮
-				if (i == 0 and j == 0)continue;
-				else if (i == 0)pre[i][j] = pre[i][j - 1];
-				else if (j == 0)pre[i][j] = pre[i - 1][j];
-				else pre[i][j] = pre[i - 1][j] + pre[i][j - 1] - pre[i - 1][j - 1];
-
-				// 加上当前贡献
-				pre[i][j] += a[i][j];
-			}
-
-
-			===== 二维差分 ===== 
-
-			// 对以下矩阵每个位置 += 1
-			// (x, y)             (x, y + leny - 1)
-			// (x + lenx - 1, y)  (x + lenx - 1, y + leny - 1)
-
-			cnt[x][y]++;
-			cnt[x + lenx][y]--;
-			cnt[x][y + leny]--;
-			cnt[x + lenx][y + leny]++;
-
-			fa(i, 1, n)fa(j, 1, m)cnt[i][j] += cnt[i - 1][j] + cnt[i][j - 1] - cnt[i - 1][j - 1];
-
-
-			===== 询问二维前缀和 =====
-
-			-- x, y, nx, ny --
-
-			(nx, ny)  (nx, y)
-			( x, ny)  ( x, y)
-
-			pre[x][y]
-			+ pre[nx - 1][ny - 1]
-			- pre[nx - 1][y] - pre[x][ny - 1]
-		*/
-
-		/* [三维前缀和]
-
-			===== 初始化前缀和 =====
-
-			fa(i, 1, n)
-			fa(j, 1, m)
-			fa(k, 1, q) {
-				// 继承上一轮
-			    pre[i][j][k] =
-					pre[i - 1][j][k] + pre[i][j - 1][k] + pre[i][j][k - 1]
-					+ pre[i - 1][j - 1][k - 1] 
-					- pre[i - 1][j - 1][k] - pre[i - 1][j][k - 1] - pre[i][j - 1][k - 1];
-
-				// 加上当前贡献
-				pre[i][j][k] += a[i][j][k];
-			}
-
-
-			// 带 0 玩的情况下，直接把有 < 0 的项删掉就行
-			fa(i, 0, n)
-			fa(j, 0, m)
-			fa(k, 0, q) {
-				// 继承上一轮
-				if (i == 0 and j == 0 and k == 0)continue;
-				else if (i == 0 and j == 0)pre[i][j][k] = pre[i][j][k - 1];
-				else if (i == 0 and k == 0)pre[i][j][k] = pre[i][j - 1][k];
-				else if (j == 0 and k == 0)pre[i][j][k] = pre[i - 1][j][k];
-				else if (i == 0)pre[i][j][k] = pre[i][j - 1][k] + pre[i][j][k - 1] - pre[i][j - 1][k - 1];
-				else if (j == 0)pre[i][j][k] = pre[i - 1][j][k] + pre[i][j][k - 1] - pre[i - 1][j][k - 1];
-				else if (k == 0)pre[i][j][k] = pre[i - 1][j][k] + pre[i][j - 1][k] - pre[i - 1][j - 1][k];
-				else {
-					pre[i][j][k] = 
-						pre[i - 1][j][k] + pre[i][j - 1][k] + pre[i][j][k - 1]
-						+ pre[i - 1][j - 1][k - 1]
-						- pre[i - 1][j - 1][k] - pre[i - 1][j][k - 1] - pre[i][j - 1][k - 1];
-				}
-
-				// 加上当前贡献
-				pre[i][j][k] += a[i][j][k]; 
-			}
-
-
-			===== 询问三维前缀和 =====
-
-			-- x, y, z, nx, ny, nz --
-
-			pre[x][y][z]
-			- pre[nx - 1][y][z] - pre[x][ny - 1][z] - pre[x][y][nz - 1]
-			- pre[nx - 1][ny - 1][nz - 1] 
-			+ pre[nx - 1][ny - 1][z] + pre[nx - 1][y][nz - 1] + pre[x][ny - 1][nz - 1]
 		*/
 
 		/* [py 随机数]
@@ -952,24 +452,33 @@ namespace MyTools
 			原坐标系的曼哈顿距离转切比雪夫距离：(x, y) => (x + y, x - y)
 			原坐标系的切比雪夫距离转曼哈顿距离：(x, y) => ((x + y) / 2, (x - y) / 2)
 		*/
-
-		/* [贪心 or tricks]
-			1. [l_i, r_i] 区间题，有可能需要按 r_i 升序排
-				- 以 R 升序排序，本质上就是在每一步都选择当前“最快结束”的区间
-				- 如：给定若干区间 [l_i, r_i]，求出最多能选择多少个互不重叠的区间。
-
-			2. 带(很可能是时间)顺序的问题可以考虑《倒序》能不能解决，有时候倒序能提供一个新视角
-				- 如：有一系列任务，每个任务有一个截止时间 d_i 和收益 p_i。如何选择任务使得总收益最大？
-
-			3. 贡献法，即考虑每一个元素的贡献而不是每一个整体
-				- 求一个数组所有子数组的 (最大值 - 最小值) 之和。不从“子数组”的角度去枚举，而是从“每个元素”的角度去思考：对于最终答案，这个元素贡献了多少？
-		*/
 	};
 
 	template <typename T>
 	class Math
 	{
 	public:
+		constexpr static T ceil(T a, T b) {
+			// 向上取整 (正负数通用)
+			T res = a / b;
+			if (res > 0)res++;
+			return res;
+		}
+		constexpr static T log2(T a) {
+			T ans = 0;
+			while (a) {
+				ans++;
+				a >>= 1;
+			}
+			ans--;
+			return ans;
+		}
+		constexpr int countBits(unsigned long long n) {
+			if (n == 0) return 0;
+			// __builtin_clzll 返回前导零的个数
+			// 64 减去前导零个数，即为最高位的位置（从1开始算位数）
+			return 64 - __builtin_clzll(n);
+		}
 		constexpr static T gcd(T a, T b)
 		{
 			return b ? gcd(b, a % b) : a;
@@ -998,6 +507,7 @@ namespace MyTools
 		}
 		constexpr static T fastPow(T a, T n, T mod = 1e9 + 7)
 		{ // 快速幂
+			//n %= (mod - 1); // n 过大，且 mod 为质数时使用
 			T ans = 1;
 			a %= mod;
 			while (n)
@@ -1010,7 +520,9 @@ namespace MyTools
 			return ans;
 		}
 		constexpr static T inv(T x, T mod)
-		{ // 快速幂求逆
+		{ 
+			// 快速幂求逆，x 与 mod 互斥才能用
+			// 若不互斥，考虑扩大模数
 			return fastPow(x, mod - 2, mod);
 		}
 		static vector<int> highPrecisionAdd(vector<int>& A, vector<int>& B)
@@ -1093,6 +605,25 @@ namespace MyTools
 				se.insert(m);
 			return se;
 		}
+		static vector<pair<T, ll>> primeFactorsVEC(T n)
+		{ // 分解质因数
+			vector<pair<T, ll>> ve;
+			T m = n;
+			for (T i = 2; i <= n / i; i++)
+			{
+				if (m % i == 0) {
+					ll cnt = 0;
+					while (m % i == 0) {
+						m /= i;
+						cnt++;
+					}
+					ve.push_back({ i, cnt });
+				}
+			}
+			if (m > 1)
+				ve.push_back({ m, 1 });
+			return ve;
+		}
 		static long long C(long long a, long long b, long long mod)
 		{
 			long ans = 1;
@@ -1168,14 +699,17 @@ namespace MyTools
 		class PreInv {
 			// 预处理逆元
 		private:
-			array<int, N> _inv;
+			array<ll, N> _inv;
 		public:
 			PreInv() {
 				_inv[1] = 1;
 				for (int i = 2; i <= (int)N - 1; i++)
 					_inv[i] = (mod - mod / i) * 1ll * _inv[mod % i] % mod;
 			}
-			int inv(int n) const {
+			ll inv(int n) const {
+				return _inv[n];
+			}
+			const ll& operator[](int n) const {
 				return _inv[n];
 			}
 		};
@@ -1212,6 +746,8 @@ namespace MyTools
 
 		ll lucas(ll n, ll m)
 		{ // 卢卡斯定理
+			if (m < 0 || n - m < 0)
+				return 0;
 			return m == 0 ? 1 % mod : lucas(n / mod, m / mod) * C(n % mod, m % mod) % mod;
 		}
 
@@ -1465,23 +1001,11 @@ namespace MyTools
 			return query(L, R, 1, 1, n);
 		}
 
-		//int query1(int p, int pl, int pr, ll x) {
-		//	// 返回最后一个前缀和小于 x 的位置
-		//	
-		//	if (info[p].sum < x)return pr + 1;
-		//	if (pl == pr)return pl;
-
-		//	int mid = pl + pr >> 1;
-		//	int pos = query1(l(p), pl, mid, x);
-		//	if (pos != mid + 1)return pos;
-		//	else return query1(r(p), mid + 1, pr, x - info[l(p)].sum);
-		//}
-		//int query1(ll x) {
-		//	return query1(1, 1, n, x) - 1;
-		//}
-
+		// 线段树二分参考
+		// 需保证每次递归只进入一个分支，可以进行适当剪枝
+		// 如果实在不能只进入一个分支，考虑修改 Info
 		//int query2(int p, int pl, int pr, ll x) {
-		//	// 返回第一个前缀和大于x的位置
+		//	// 返回第一个前缀和大于 x 的位置
 		//	if (pl == pr)return pl;
 
 		//	int mid = pl + pr >> 1;
@@ -1908,64 +1432,98 @@ namespace MyTools
 	template<typename T>
 	Log2Table<2000000> ST<T>::Log2;
 
+	template<typename T>
+	class FenwickTree
+	{ // 下标范围 [1, n]
+	private:
+		int n;
+		vector<T> t;
+		T lowbit(T k) { return k & -k; }
+	public:
+		FenwickTree(int _n) : n(_n), t(_n + 10) {}
+		void update(int idx, const T& k)
+		{
+			for (int i = idx; i <= n; i += lowbit(i))
+			{
+				t[i] += k;
+			}
+		}
+		T query(int idx)
+		{
+			T res = 0;
+			for (int i = idx; i; i -= lowbit(i))
+			{
+				res += t[i];
+			}
+			return res;
+		}
+		T query(int l, int r)
+		{
+			return query(r) - query(l - 1);
+		}
+		T querySuffix(int idx)
+		{
+			return query(n) - query(idx - 1);
+		}
+	};
 
 	template <typename T>
 	class BitTree
 	{ // 树状数组(优化的可操作前缀和)
 	public:
-		BitTree(int _n) :n(_n), t(_n + 10) {}
+		BitTree(int n, int mod) :n(n), mod(mod), t1(n + 10), t2(n + 10) {}
 
-		void update(T idx, const T& k)
-		{
-			for (T i = idx + 1; i <= n; i += lowbit(i))
-				t[i - 1] += k; // 运算符可改
+		// 【区间修改】: 区间 [l, r] 加上 k (传入下标 1-based)
+		void updateRange(int l, int r, const T& k) {
+			// 差分思想：D[l] += k, D[r + 1] -= k
+			// t1 维护 D[i]
+			// t2 维护 D[i] * i
+
+			_add(t1, l, k);
+			_add(t2, l, k * l % mod);
+
+			_add(t1, r + 1, (-k % mod + mod) % mod);
+			_add(t2, r + 1, (-k * (r + 1) % mod + mod) % mod);
 		}
 
-		T getsum(T idx)
-		{
-			T res = 0;
-			for (T i = idx + 1; i > 0; i -= lowbit(i))
-				res += t[i - 1]; // 运算符可改
-			return res;
-		}
 
-		T queryRange(int l, int r)
-		{
-			return getsum(r) - getsum(l - 1);
-		}
-
-		// 找到最小的 p 使得 sum[1...p] >= v
-		T lower_bound(T v) {
-			T sum = 0;
-			int pos = -1;
-			for (int i = LOGN; i >= 0; i--) {
-				if (pos + (1 << i) < n && sum + t[pos + (1 << i)] < v) {
-					sum += t[pos + (1 << i)];
-					pos += (1 << i);
-				}
-			}
-			return pos + 1;
-		}
-
-		// 找到最小的 p 使得 sum[1...p] > v
-		T upper_bound(T v) {
-			T sum = 0;
-			int pos = -1;
-			for (int i = LOGN; i >= 0; i--) {
-				if (pos + (1 << i) < n && sum + t[pos + (1 << i)] <= v) {
-					sum += t[pos + (1 << i)];
-					pos += (1 << i);
-				}
-			}
-			return pos + 1;
+		// 【区间查询】: 查询区间 [l, r] 的和 (传入下标 1-based)
+		T queryRange(int l, int r) {
+			return ((_query_prefix(r) - _query_prefix(l - 1)) % mod + mod) % mod;
 		}
 
 	private:
-		vector<T> t; // 下标从0开始，实际上就是前缀和数组
-		int n;
-		int LOGN = 23;
+		int n, mod;
+		vector<T> t1, t2; // 下标从0开始，实际上就是前缀和数组
 
 		T lowbit(T k) { return k & -k; }
+
+		// 内部通用单点修改: 在逻辑位置 idx 处加上 val
+		void _add(vector<T>& t, int idx, T val)
+		{
+			for (int i = idx; i <= n; i += lowbit(i)) {
+				// 逻辑下标 i 对应 物理下标 i-1
+				t[i - 1] = (t[i - 1] + val) % mod;
+			}
+		}
+
+		// 内部通用前缀和查询: 查询逻辑位置对应的 sum
+		T _query(const vector<T>& t, int idx)
+		{
+			T res = 0;
+			for (int i = idx; i > 0; i -= lowbit(i)) {
+				// 逻辑下标 i 对应 物理下标 i-1
+				res = (res + t[i - 1]) % mod;
+			}
+			return res;
+		}
+
+		// 计算前缀和 sum[1...k]
+		// 公式: sum[k] = (k + 1) * Σ(D[i]) - Σ(D[i] * i)
+		T _query_prefix(int k)
+		{
+			return (((T)(k + 1) * _query(t1, k) % mod - _query(t2, k)) % mod + mod) % mod;
+		}
 	};
 
 	class Manacher
@@ -2021,28 +1579,16 @@ namespace MyTools
 	class DoubleHashString
 	{
 	private:
-		vector<ll> hs1, bs1, hs2, bs2;
+		int n;
+		vector<ll> hs1, hs2;
+		vector<ll> bs1, bs2; // base 数组完全独立，可以提出去当全局数组
 
-		//const int mod1 = 2147483647;
-		//const int mod2 = 1000000007;
-		//int generateRandomBase(int mod) {
-		//	random_device rd;
-		//	mt19937 gen(rd());
-		//	uniform_int_distribution<> dis(1, mod - 1);
-		//	return dis(gen);
-		//}
-		//const int base1 = generateRandomBase(mod1);
-		//const int base2 = generateRandomBase(mod2);
-
-		const int base1 = 233;     // 第一个质数基数
-		const int base2 = 131;     // 第二个质数基数
-		const ll mod1 = 1e9 + 7;    // 第一个模数
-		const ll mod2 = 2147483647;   // 第二个模数
+		const int base1 = 233;       // 第一个质数基数
+		const int base2 = 131;       // 第二个质数基数
+		const ll mod1 = 1e9 + 7;     // 第一个模数
+		const ll mod2 = 2147483647;  // 第二个模数
 
 	public:
-		int n;
-
-		// 初始化函数，预计算质数基数的幂次
 		DoubleHashString(const string& s)
 		{
 			// s 下标从 0 开始，l r 查询下标从 1 开始
@@ -2066,25 +1612,29 @@ namespace MyTools
 		}
 
 		// 获取子串的双哈希值
+		// Hash("abc") = 1*Base^2 + 2*Base^1 + 3*Base^0
+		// 这里相当于把前缀的影响给完全减掉了
 		pll get(int l, int r)
 		{
-			ll x = ((hs1[r] - hs1[l - 1] * bs1[r - l + 1]) % mod1 + mod1) % mod1;
-			ll y = ((hs2[r] - hs2[l - 1] * bs2[r - l + 1]) % mod2 + mod2) % mod2;
-			return make_pair(x, y);
+			ll x = (hs1[r] - hs1[l - 1] * bs1[r - l + 1]) % mod1;
+			if (x < 0) x += mod1;
+			ll y = (hs2[r] - hs2[l - 1] * bs2[r - l + 1]) % mod2;
+			if (y < 0) y += mod2;
+			return { x, y };
 		}
 
 
 		// 通过 哈希 + 二分 找 a b 的最长公共前缀
-		// O(nlogn) 如果被卡那只能用 SA 了
+		// O(logn) 如果被卡那只能用 SA 了
 		static int lcp(DoubleHashString& a, DoubleHashString& b, int l1 = 1, int r1 = -1, int l2 = 1, int r2 = -1) {
 			if (r1 == -1)r1 = a.n;
 			if (r2 == -1)r2 = b.n;
 			int lena = r1 - l1 + 1, lenb = r2 - l2 + 1;
-			int l = 1, r = min(lena, lenb);
 			var check = [&](int mid)->bool {
 				if (a.get(l1, l1 + mid - 1) == b.get(l2, l2 + mid - 1)) return true;
 				else return false;
 				};
+			int l = 1, r = min(lena, lenb);
 			while (l < r) {
 				int mid = l + r + 1 >> 1;
 				if (check(mid))l = mid;
@@ -2095,12 +1645,11 @@ namespace MyTools
 		}
 
 		// 通过 哈希 + 二分 判断两字符串 a b 的字典序大小
+		// 通过二分找最长公共前缀，然后比较公共前缀后的一个字符即可
 		// 1: a > b 
 		// 0: a == b 
 		// -1: a < b 
-		// 注：字符串下标都从 0 开始，但是 l,r 下标都从 1 开始
 		static int string_cmp(DoubleHashString& a, DoubleHashString& b, const string& s1, const string& s2, int l1, int r1, int l2, int r2) {
-			// 原理是通过二分找最长公共前缀，然后比较公共前缀后的一个字符即可
 			int lena = r1 - l1 + 1, lenb = r2 - l2 + 1;
 			int _lcp = lcp(a, b, l1, r1, l2, r2);
 			if (_lcp < min(lena, lenb)) {
@@ -2114,7 +1663,11 @@ namespace MyTools
 			}
 		}
 
-		// 注意 *字符串在后面的* 用这个函数，并传入相应长度 
+		// 哈希值合并
+		// H("abcdef") = H("abc") * Base^3 + H("def")
+		//		a * Base^5 + b * Base^4 + c * Base^3 + 
+		//		d * Base^2 + e * Base^1 + f * Base^0
+		// 使用前半段字符串的类，传入后半段字符串的长度
 		pll combineHash(pll h1, pll h2, int L2) {
 			ll newH1 = (h1.first * bs1[L2] + h2.first) % mod1;
 			ll newH2 = (h1.second * bs2[L2] + h2.second) % mod2;
@@ -2237,7 +1790,6 @@ namespace MyTools
 
 		int dis(int x, int y) {
 			// x y 两节点距离
-
 			int f = lca(x, y);
 			return depth[x] - depth[f] + depth[y] - depth[f];
 		}
@@ -2261,7 +1813,10 @@ namespace MyTools
 				}
 
 			// 特判：y 就是原本 x 的祖宗
-			if (x == y)return { res, x };
+			if (x == y) {
+				//res = max({ res, dp[x][0] });
+				return { res, x };
+			}
 
 			// 说明还没找到祖宗，更新 a、b 后接着跳
 			for (int i = 29; i >= 0; i--)
@@ -2271,6 +1826,8 @@ namespace MyTools
 				}
 
 			//res = max({ res, dp[x][0], dp[y][0] });
+			//int lca = f[x][0];
+			//res = max({ res, dp[lca][0] });
 
 			return { res, f[x][0] };
 		}
@@ -2631,7 +2188,7 @@ namespace MyTools
 		*/
 	private:
 		vector<long long> a; // 线性基基底
-		const int MN = 62;
+		static constexpr int MN = 62;
 		bool flag = false;
 
 	public:
@@ -2658,7 +2215,7 @@ namespace MyTools
 		// 插入新数
 		void insert(long long x) {
 			// 跟 check 函数很像
-			for (int i = MN; ~i; i--)
+			for (int i = MN; i >= 0; i--)
 				if (x & (1ll << i))
 					if (!a[i]) { a[i] = x, rank++; return; } // 线性基里没有 x，插入 x
 					else x ^= a[i]; // 线性基里有 x
@@ -2672,17 +2229,17 @@ namespace MyTools
 
 		// 线性基合并
 		void operator +=(XorBase& x) {
-			for (int i = MN; i >= 0; i--)if (x[i])*this += x[i];
+			for (int i = MN; i >= 0; i--)if (x[i])this->insert(x[i]);
 		}
 		friend XorBase operator +(XorBase& x, XorBase& y) {
 			XorBase z = x;
-			for (int i = 62; i >= 0; i--)if (y[i])z += y[i];
+			for (int i = MN; i >= 0; i--)if (y[i])z += y[i];
 			return z;
 		}
 
 		// 查是否存在线性基内
 		bool check(long long x) {
-			for (int i = MN; ~i; i--)
+			for (int i = MN; i >= 0; i--)
 				if (x & (1ll << i))
 					if (!a[i])return false;
 					else x ^= a[i];
@@ -2691,7 +2248,7 @@ namespace MyTools
 
 		// 查最大
 		long long qmax(long long res = 0) {
-			for (int i = MN; ~i; i--)
+			for (int i = MN; i >= 0; i--)
 				res = max(res, res ^ a[i]);
 			return res;
 		}
@@ -2709,7 +2266,7 @@ namespace MyTools
 			long long res = 0; int cnt = 0;
 			k -= flag; if (!k)return 0;
 			for (int i = 0; i <= MN; i++) {
-				for (int j = i - 1; ~j; j--)
+				for (int j = i - 1; j >= 0; j--)
 					if (a[i] & (1ll << j))a[i] ^= a[j];
 				if (a[i])tmp[cnt++] = a[i];
 			}
@@ -2720,6 +2277,151 @@ namespace MyTools
 		}
 	};
 
+	template <class Info>
+	class OfflineCatTree {
+	public:
+		OfflineCatTree() : n(0) {}
+		OfflineCatTree(int _n) { init(_n); }
+		OfflineCatTree(vector<Info>& _init) { init(_init); }
+
+		// 添加询问
+		void add_query(int l, int r, int id) {
+			qs.push_back({ l, r, id });
+		}
+
+		// 核心处理函数，返回所有询问的结果
+		vector<Info>& solve() {
+			if (qs.empty()) return ans;
+
+			// 找到最大的 id 以调整答案数组大小
+			int max_id = 0;
+			for (const auto& q : qs)max_id = max(max_id, q.id);
+			ans.assign(max_id + 1, Info());
+
+			solve(1, n, qs);
+			return ans;
+		}
+
+	private:
+		void init(int _n) {
+			n = _n;
+			info.assign(n + 1, Info());
+			tmp.resize(n + 1);
+			qs.clear();
+		}
+
+		void init(vector<Info>& _init) {
+			n = _init.size() - 1;
+			info = move(_init);
+			tmp.resize(n + 1);
+			qs.clear();
+		}
+
+		struct Query {
+			// (可以修改，在这里可以加入更多参数)
+			int l, r, id;
+		};
+
+		int n;
+		vector<Info> info;  // 存储原始数据 (下标 1 ~ n)
+		vector<Query> qs;   // 存储询问
+		vector<Info> ans;   // 存储最终算出的 Info (可以修改，不用 Info 输出)
+		vector<Info> tmp;   // O(N) 的全局缓存，用于计算前缀/后缀
+
+
+		// 离线分治：利用递归特性，算完一层扔一层，空间 O(N)
+		// 只要题目允许离线，离线猫树全面优于在线猫树，它保留了 O(1) 的合并次数，同时把空间降到了最低。
+		// 若强制在线，使用线段树
+		void solve(int l, int r, vector<Query>& q_curr) {
+			if (q_curr.empty()) return;
+
+			// 叶子节点：直接由 info[l] 贡献
+			if (l == r) {
+				for (const auto& q : q_curr) {
+					ans[q.id] = info[l];
+				}
+				return;
+			}
+
+			int mid = (l + r) >> 1;
+
+			// --- 1. 预处理中间向两边的前缀/后缀 ---
+			// 注意：这里复用了 tmp 数组，省内存
+
+			// [mid, l] 后缀：从 mid 向左
+			// tmp[i] = info[i] + tmp[i + 1]
+			// Info 合并方向：(左边) + (右边)
+			tmp[mid] = info[mid];
+			for (int i = mid - 1; i >= l; i--) {
+				tmp[i] = info[i] + tmp[i + 1];
+			}
+
+			// [mid + 1, r] 前缀：从 mid + 1 向右
+			// tmp[i] = tmp[i - 1] + info[i]
+			if (mid + 1 <= r) {
+				tmp[mid + 1] = info[mid + 1];
+				for (int i = mid + 2; i <= r; i++) {
+					tmp[i] = tmp[i - 1] + info[i];
+				}
+			}
+
+			// --- 2. 处理询问 ---
+			vector<Query> q_left, q_right;
+			// 预留空间稍微优化一点常数，不写也没事
+			q_left.reserve(q_curr.size() / 2);
+			q_right.reserve(q_curr.size() / 2);
+
+			for (const auto& q : q_curr) {
+				if (q.r <= mid) {
+					q_left.push_back(q);
+				}
+				else if (q.l > mid) {
+					q_right.push_back(q);
+				}
+				else {
+					// 跨越 mid 的询问
+					// Ans = Suffix[l] + Prefix[r]
+					// (可以修改，对合并答案进行优化，而不是直接合并)
+
+					ans[q.id] = tmp[q.l] + tmp[q.r];
+				}
+			}
+
+			// 释放当前层内存
+			q_curr.clear();
+
+			// --- 3. 递归 ---
+			solve(l, mid, q_left);
+			solve(mid + 1, r, q_right);
+		}
+	};
+	/*
+	struct Info {
+		Info() {};
+
+		int query_ans() const {
+			// 实现答案查询函数
+
+		}
+	};
+
+	Info operator+(const Info& a, const Info& b) {
+		Info res;
+
+		return res;
+	}
+	*/
+
+	namespace FastIO {
+		char buf[1 << 21], * p1 = buf, * p2 = buf;
+		inline char gc() {
+			if (p1 == p2) {
+				p2 = (p1 = buf) + fread(buf, 1, 1 << 21, stdin);
+				if (p1 == p2) return EOF;
+			}
+			return *p1++;
+		}
+	}
 	template<typename T>
 	class fast {
 	public:
@@ -2727,15 +2429,15 @@ namespace MyTools
 		inline static T in()
 		{
 			T x = 0, f = 1;
-			char ch = getchar();
+			char ch = FastIO::gc();
 			while (ch < '0' || ch>'9')
 			{
 				if (ch == '-')
 					f = -1;
-				ch = getchar();
+				ch = FastIO::gc();
 			}
 			while (ch >= '0' && ch <= '9')
-				x = x * 10 + ch - '0', ch = getchar();
+				x = x * 10 + ch - '0', ch = FastIO::gc();
 			return x * f;
 		}
 		static void out(T x)
@@ -2753,7 +2455,6 @@ namespace MyTools
 			putchar('\n');
 		}
 	};
-
 	class PersistentWeightSegmemtTree {
 		/**
 		* 可持久化权值线段树(主席树)
@@ -2762,7 +2463,7 @@ namespace MyTools
 		* 注意：
 		* - 本质是权值线段树，所有的思考应该建立在权值线段树上。
 		* - 运用了前缀和差分原理，故只适用于静态区间，动态区间需要树状数组套主席树
-		* - 若值域过大，可不开离散化，靠动态开点 (update函数)
+		* - 离散化非必须，某些函数在离散化的情况下可能出错。若值域过大，可不开离散化，靠动态开点 (update函数)
 		*/
 
 		/* 求第 k 小模板
@@ -2819,13 +2520,23 @@ namespace MyTools
 		*/
 
 	private:
-		struct tree { int l = 0, r = 0; ll sum = 0; }; // 树上的节点
+		struct tree { 
+			int l = 0, r = 0; 
+			ll cnt = 0; // 当前节点的值域下标内出现了几次
+			//【可在此添加更多权值线段树可维护的参数】
+
+		}; // 树上的节点
 		int tot = 0;    // 记录节点个数，并作为版本编号
 		vector<tree>t;  // 存树各个的节点 
-		int len;        // 离散化后的数的个数\
-												也是值域大小 (可不开离散化，纯靠动态开点即可)
+		int len;        // 离散化后的数的个数，也是值域大小 (可不开离散化，纯靠动态开点即可)
+		int n;          // 原始数组长度
 
-		int build(int l, int r) { // 初始化建树
+		int build(int l, int r) {
+			/**
+			* 值域小时建空树，值域过大则全部动态开点
+			* 初始化建树，第 0 版本
+			* 即初始化下标值域为 [1, len]，但下标对应值为 0 的空线段树
+			*/
 			int node = ++tot;
 			if (l == r)return node;
 			int mid = l + r >> 1;
@@ -2836,22 +2547,25 @@ namespace MyTools
 	public:
 		vector<int>root; // 存各个版本线段树的根节点编号
 
-		PersistentWeightSegmemtTree(int len, int n, bool f = 1) :len(len), t((n << 5) + 10), root(n + 10) {
+		PersistentWeightSegmemtTree(int len, int n, bool f = 1) :len(len), n(n), t((n << 5) + 10), root(n + 10) {
 			/**
-			* m：离散化后长度(值域大小)，不用 +1 (也可不开离散化，m 本身不会开空间)
+			* len：值域大小，不用 +1 (值域可以非常大，只要不建初始化空树即可(f=0))
 			* n：原始数组长度，不用 +1
-			* f：是否开离散化，不开就不用设叶子节点，纯靠动态开点
+			* f：值域是否较小(<= 1e6)。若值域过大，且决定不用离散化，不能建空树，纯靠动态开点
+			* 如果出现 RE，可考虑将 t 的空间开大
 			*/
 			if (f)root[0] = build(1, len);
 		}
 
 		int update(int l, int r, int pos, int value, int pre) {
-			int node = ++tot;
-			t[node] = t[pre];
-			t[node].sum += value;
+			int node = ++tot;     // 开新节点
+			t[node] = t[pre];     // 复制上个版本的左右子树指针
+			t[node].cnt += value; // 原有的值上 += value
+
 			if (l == r)return node;
+
 			int mid = l + r >> 1;
-			if (pos <= mid)  // 新的左子节点会继承前一个版本的左子节点进行更新
+			if (pos <= mid)  // 要修改的 pos 在左子，左子需要开新的节点，右子不变 (继承 pre)
 				t[node].l = update(l, mid, pos, value, t[pre].l);
 			else             // 同理
 				t[node].r = update(mid + 1, r, pos, value, t[pre].r);
@@ -2869,13 +2583,13 @@ namespace MyTools
 		int change(int l, int r, int pos, int value, int pre) {
 			int node = ++tot;
 			t[node] = t[pre];
-			t[node].sum = value;
+			t[node].cnt = value;
+
 			if (l == r)return node;
+
 			int mid = l + r >> 1;
-			if (pos <= mid)
-				t[node].l = change(l, mid, pos, value, t[pre].l);
-			else
-				t[node].r = change(mid + 1, r, pos, value, t[pre].r);
+			if (pos <= mid)t[node].l = change(l, mid, pos, value, t[pre].l);
+			else t[node].r = change(mid + 1, r, pos, value, t[pre].r);
 			return node;
 		}
 
@@ -2887,92 +2601,100 @@ namespace MyTools
 			return change(1, len, pos, value, pre);
 		}
 
-		int query_k_min(int u, int v, int l, int r, int k) {
-			// 线段树版本区间 [u, v] 代替目标区间 [L, R]
-
-			int mid = l + r >> 1;
-
-			// 通过区间减法得左儿子中存的数值个数
-			// lnum 为 原数组区间 [l, mid] 中数的个数 (即离散化数组中，值域是 [l, mid] 的数的个数)
-			int lnum = t[t[v].l].sum - t[t[u].l].sum;
-
-			if (l == r)return l;
-			if (k <= lnum) // 第 k 小在左子
-				return query_k_min(t[u].l, t[v].l, l, mid, k); // 线段树版本都改为 l，往左区间 [l, mid] 找
-			else           // 第 k 小在右子，并注意相减
-				return query_k_min(t[u].r, t[v].r, mid + 1, r, k - lnum); // 线段树版本都改为 r，往右区间 [mid + 1, r] 找
-		}
-
 		int query_k_min(int L, int R, int k) {
 			/**
 			* 求区间第 k 小
-			* 原理是前缀和，要传入 L - 1
-			* 本质就是用 R 版本线段树 减掉 L - 1 版本线段树，得到 [L, R] 区间，然后再在这个区间里找第 k 小
+			* L, R 为线段树版本，要传入 L - 1
+			* 本质就是用 R 版本线段树 减掉 L - 1 版本线段树，得到只包含 [L, R] 区间的权值线段树
+			*
+			* 离散化：k 不是具体数值，只是相对排位，可直接离散化
 			*/
-			return query_k_min(root[L], root[R], 1, len, k);
-		}
 
-		int query_k_max(int u, int v, int l, int r, int k) {
-			// 线段树版本区间 [u, v] 代替目标区间 [L, R]
+			var query = [&](var query, int u, int v, int l, int r, int k)->int {
+				// v 是 R 版本，u 是 L - 1 版本
+				if (l == r) return l;
 
-			int mid = l + r >> 1;
+				int mid = l + r >> 1;
 
-			// 通过区间减法得右儿子中存的数值个数
-			// rnum 为 原数组区间 [mid + 1, r] 中数的个数 (即离散化数组中，值域是 [mid + 1, r] 的数的个数)
-			int rnum = t[t[v].r].sum - t[t[u].r].sum;
+				// 通过区间减法得左儿子中存的数值个数
+				// lnum 为值域下标区间 [l, mid] 中数的个数
+				int lnum = t[t[v].l].cnt - t[t[u].l].cnt;
 
-			if (l == r)return l;
-			if (k <= rnum) // 第 k 大在右子
-				return query_k_max(t[u].r, t[v].r, mid + 1, r, k); // 线段树版本都改为 r，往右区间 [mid + 1, r] 找
-			else           // 第 k 大在左子，并注意相减
-				return query_k_max(t[u].l, t[v].l, l, mid, k - rnum); // 线段树版本都改为 l，往左区间 [l, mid] 找
+				if (k <= lnum) // 第 k 小在左子
+					return query(query, t[u].l, t[v].l, l, mid, k); // 往左区间 [l, mid] 找
+				else           // 第 k 小在右子，并注意相减
+					return query(query, t[u].r, t[v].r, mid + 1, r, k - lnum); // 往右区间 [mid + 1, r] 找
+				};
+
+			return query(query, root[L], root[R], 1, len, k);
 		}
 
 		int query_k_max(int L, int R, int k) {
 			/**
 			* 求区间第 k 大
-			* 原理是前缀和，要传入 L - 1
-			* 本质就是用 R 版本线段树 减掉 L - 1 版本线段树，得到 [L, R] 区间，然后再在这个区间里找第 k 大
+			* L, R 为线段树版本，要传入 L - 1
+			* 本质就是用 R 版本线段树 减掉 L - 1 版本线段树，得到只包含 [L, R] 区间的权值线段树
+			*
+			* 离散化：k 不是具体数值，只是相对排位，可直接离散化
 			*/
-			return query_k_max(root[L], root[R], 1, len, k);
+
+			var query = [&](var query, int u, int v, int l, int r, int k)->int {
+				// v 是 R 版本，u 是 L - 1 版本
+				if (l == r) return l;
+
+				int mid = l + r >> 1;
+
+				// 通过区间减法得右儿子中存的数值个数
+				// rnum 为值域下标区间 [mid + 1, r] 中数的个数
+				int rnum = t[t[v].r].cnt - t[t[u].r].cnt;
+
+				if (k <= rnum) // 第 k 大在右子
+					return query(query, t[u].r, t[v].r, mid + 1, r, k); // 往右区间 [mid + 1, r] 找
+				else           // 第 k 大在左子，并注意相减
+					return query(query, t[u].l, t[v].l, l, mid, k - rnum); // 往左区间 [l, mid] 找
+				};
+
+			return query(query, root[L], root[R], 1, len, k);
 		}
 
 		ll query_bigger_num(int L, int R, ll k) {
 			/**
-			* 双版本差分查询区间值域大于等于 k 的数的总数 sum
+			* 求值域大于等于 k 的数的总个数
 			* L, R 为线段树版本，要传入 L - 1
-			* 离散化：k 是要找的特定数在离散化数组中的下标，即 k = find(x)
-			* 非离散化：k 就是要查的特定数，即 k = x
-			* (考虑到值域限制，使用本函数很可能不能使用离散化，例题：2020icpc昆明)
+			*
+			* 离散化：k 是具体数值，可以不离散化；如果非得离散化，需要把原数组的数和查询的数一并离散化
 			*/
 
 			var query = [&](var query, int u, int v, int l, int r, ll k)->ll {
-				// (原理可能有点难以理解，建议画两个版本的线段树然后看图思考)
+				// v 是 R 版本，u 是 L - 1 版本
+				if (l == r) return t[v].cnt - t[u].cnt; // 叶子节点，直接返回个数差
 
-				if (l == r) return t[v].sum - t[u].sum;
 				int mid = l + r >> 1;
-				if (k > mid)return query(query, t[u].r, t[v].r, mid + 1, r, k);
-				else return t[t[v].r].sum - t[t[u].r].sum + query(query, t[u].l, t[v].l, l, mid, k);
+				if (k > mid) // 找下标 >= k 的，左边不满足条件，去右边接着找
+					return query(query, t[u].r, t[v].r, mid + 1, r, k);
+				else         // 左边存在满足条件的区间，且右边整个区间都满足，故左边的答案加上右边全部
+					return query(query, t[u].l, t[v].l, l, mid, k) + t[t[v].r].cnt - t[t[u].r].cnt;
 				};
 			return query(query, root[L], root[R], 1, len, k);
 		}
 
 		ll query_smaller_num(int L, int R, ll k) {
 			/**
-			* 双版本差分查询区间值域小于等于 k 的数的总数 sum
+			* 求值域小于等于 k 的数的总个数
 			* L, R 为线段树版本，要传入 L - 1
-			* 离散化：k 是要找的特定数在离散化数组中的下标，即 k = find(x)
-			* 非离散化：k 就是要查的特定数，即 k = x
-			* (考虑到值域限制，使用本函数很可能不能使用离散化，例题：2020icpc昆明)
+			*
+			* 离散化：k 是具体数值，可以不离散化；如果非得离散化，需要把原数组的数和查询的数一并离散化
 			*/
 
 			var query = [&](var query, int u, int v, int l, int r, ll k)->ll {
-				// (原理可能有点难以理解，建议画两个版本的线段树然后看图思考)
+				// v 是 R 版本，u 是 L - 1 版本
+				if (l == r) return t[v].cnt - t[u].cnt; // 叶子节点，直接返回个数差
 
-				if (l == r) return t[v].sum - t[u].sum;
 				int mid = l + r >> 1;
-				if (k <= mid)return query(query, t[u].l, t[v].l, l, mid, k);
-				else return t[t[v].l].sum - t[t[u].l].sum + query(query, t[u].r, t[v].r, mid + 1, r, k);
+				if (k <= mid) // 找下标 <= k 的，右边不满足条件，去左边接着找
+					return query(query, t[u].l, t[v].l, l, mid, k);
+				else          // 右边存在满足条件的区间，且左边整个区间都满足，故右边边的答案加上左边全部 
+					return t[t[v].l].cnt - t[t[u].l].cnt + query(query, t[u].r, t[v].r, mid + 1, r, k);
 				};
 			return query(query, root[L], root[R], 1, len, k);
 		}
@@ -2987,7 +2709,7 @@ namespace MyTools
 			var query = [&](var query, int l, int r, int L, int R, int pre)->ll {
 				// 只涉及一个版本，故目标区间不是线段树版本，而是 [L, R]
 
-				if (L <= l and r <= R) return t[pre].sum;
+				if (L <= l and r <= R) return t[pre].cnt;
 				int mid = l + r >> 1;
 				int res = 0;
 				if (L <= mid)res += query(query, l, mid, L, R, t[pre].l);
@@ -3007,7 +2729,7 @@ namespace MyTools
 		//	vector<pair<int, int>> res;
 
 		//	auto dfs = [&](auto dfs, int u, int v, int l, int r) {
-		//		ll sum = t[v].sum - t[u].sum;
+		//		ll sum = t[v].cnt - t[u].cnt;
 
 		//		if (sum <= B) return;
 
@@ -3102,7 +2824,7 @@ namespace MyTools
 		using PointSet = Polygon<T>;
 
 
-		const double eps = 1e-9;
+		const double eps = 1e-9; // 如果坐标大到 1e9，点积和叉积会达到 1e18 爆 double，需使用 long double + eps = 1e-6
 		const double PI = acos(-1.0);
 
 		template<typename T>
@@ -3216,7 +2938,7 @@ namespace MyTools
 			* A -> B 逆时针旋转角度
 			* 可以算多边形内角
 			*/
-			long long aa = cross(A, B);
+			T aa = cross(A, B);
 			double ang2 = vector_vector_angle(A, B);
 			int choice = sgn(aa);
 			if (choice >= 0)return ang2;
@@ -3232,6 +2954,16 @@ namespace MyTools
 			* 顺时针旋转90度：Rotate(A, -pi/2)，返回Vector(A.y, - A.x)。
 			*/
 			return Vector<T>(A.x * cos(rad) - A.y * sin(rad), A.x * sin(rad) + A.y * cos(rad));
+		}
+
+		template<typename T>
+		Vector<T> vector_unit(const Vector<T>& A) {
+			/**
+			* 单位向量：返回与 A 同向的单位向量（A 非零）。
+			*/
+			T len = vector_len(A);
+			if (cmp(len, 0.0) == 0) return Vector<T>(0, 0);
+			return Vector<T>(A.x / len, A.y / len);
 		}
 
 		template<typename T>
@@ -3333,17 +3065,24 @@ namespace MyTools
 		template<typename T>
 		int point_line_relation(const Point<T>& p, const Line<T>& v) {
 			/**
-			* 点和直线的位置关系
+			* 点和直线(有向)的位置关系
 			* 返回值：
-			*	1 ：p 在 v 的左边
-			*	2 ：p 在 v 的右边
+			*	1 ：p 在 v(p1->p2) 的左边
+			*	2 ：p 在 v(p1->p2) 的右边
 			*	0 ：p 在 v 上
+			*
+			* 阈值为什么用 eps * len2？
+			*   cross 的量级 ≈ |线段|²（两点各乘线段分量，量级 O(L²)）
+			*   固定 eps 无法匹配不同量级的 cross：
+			*     - L 小 → cross 小 → eps 相对太松，漏判偏离
+			*     - L 大 → cross 大 → 输入点自带误差被放大 L 倍，eps 相对太紧，误判共线
+			*   用 eps * len2 让阈值随线段长度自适应，和 cross 的量级保持一致
 			*/
 
-			int c = sgn(cross(p - v.p1, v.p2 - v.p1));
-			if (c < 0)return 1;
-			if (c > 0)return 2;
-			return 0;
+			T c = cross(p - v.p1, v.p2 - v.p1); // 2 * 三角形有向面积
+			T len2 = vector_len2(v.p2 - v.p1);
+			if (abs(c) < eps * len2) return 0;  // 三角形面积为 0，即在直线上
+			return c > 0 ? 2 : 1;
 		}
 
 		template<typename T>
@@ -3355,9 +3094,7 @@ namespace MyTools
 			*   1：p 点在线段 v 上
 			*/
 
-			// 前者为 True 说明 p 和 线段 v 的一个端点连边，和 v 本身的夹角为 0，即 p 在 直线 v 上
-			// 后者为 True 说明 p 和两端点形成平角，也就是说 p 在两端点之间
-			return sgn(cross(p - v.p1, v.p2 - v.p1)) == 0 && sgn(dot(p - v.p1, p - v.p2)) <= 0;
+			return sgn(point_segment_dis(p, v)) == 0;
 		}
 
 		template<typename T>
@@ -3667,14 +3404,14 @@ namespace MyTools
 			Point<T> q = point_line_proj(C.c, v);              // 圆心在直线上的投影点
 			double d = point_line_dis(C.c, v);                 // 圆心到直线的距离
 			double k = sqrt(C.r * C.r - d * d);
-			if (sgn(k) == 0) {                                 // 1个交点，直线和圆相切
+			if (sgn(k) == 0) {                                 // 1 个交点，直线和圆相切
 				se.push_back(q);
 				return se;
 			}
 			Point<T> n = (v.p2 - v.p1) / vector_len(v.p2 - v.p1);     // 单位向量
 			se.push_back(q + n * k);
 			se.push_back(q - n * k);
-			return se;                                         // 2个交点
+			return se;                                         // 2 个交点
 		}
 
 		template<typename T>
@@ -3884,7 +3621,7 @@ namespace MyTools
 				/**
 				* 计算 this 点相较于 reference 点的极角
 				*/
-				double res = atan2(y - reference.y, x - reference.x);
+				double res = atan2(y - reference.y, x - reference.x); // arctan -> [-pi / 2, pi / 2]; arctan2 -> [-pi, pi]
 				if (sgn(res) < 0) res += (2 * PI);
 				return res;
 			}
@@ -4086,9 +3823,23 @@ namespace MyTools
 				out << "(" << a.c << ", " << a.r << ")";
 				return out;
 			}
+			PointSet<T> get_points_on_circle(int n) {
+				/**
+				* 等角度采圆：返回圆上均匀的 n 个点
+				* n：采样点数。
+				* 原理：θ_i = 2π · i / n，点 = (cx + r · cosθ_i, cy + r · sinθ_i)
+				* 精度：n=100 时弦高≈0.0005r，n=360 时≈6e-5r
+				*/
+
+				auto res = PointSet<T>();
+				for (int i = 0; i <= n - 1; i++) {
+					db theta = 2.0 * PI * i / n;
+					res.push_back(Point<T>{ c.x + r * cos(theta), c.y + r * sin(theta) });
+				}
+				return res;
+			}
 		};
 	}
-
 
 	template <typename T>
 	class Trie01Vector {
@@ -4129,6 +3880,27 @@ namespace MyTools
 			}
 		}
 
+		// 查询前缀出现的个数
+		int countPrefix(T val, int len) {
+			// val: 提供前缀位信息的数字
+			// len: 前缀的长度（即从 MAX 开始往低位数的位数）
+
+			int now = root;
+
+			if (len > MAX + 1) return 0; // 如果查询长度超过了定义的位数范围，直接返回
+
+			// 从最高位开始，只遍历 len 层
+			for (int i = MAX; i > MAX - len; i--) {
+				bool bit = (val >> i) & 1;
+				if (!tr[now].children[bit]) {
+					return 0; // 该前缀不存在
+				}
+				now = tr[now].children[bit];
+			}
+			// 此时 now 指向的节点代表了该前缀的终点，其 cnt 就是该前缀出现的次数
+			return tr[now].cnt;
+		}
+
 		// 看看 num 跟 01 trie 里的哪个元素 XOR 最后的值最大
 		T find_max_xor(T num) {
 			int now = root;
@@ -4159,7 +3931,7 @@ namespace MyTools
 				}
 				else {
 					minXor |= (1ll << i);
-					now = tr[now].children[bit];
+					now = tr[now].children[!bit];
 				}
 			}
 			return minXor;
@@ -4178,7 +3950,7 @@ namespace MyTools
 				tr[nxt].cnt--;
 
 				if (tr[nxt].cnt == 0) {
-					// 注意：这里实际没有从vector中删除节点，只是标记为未使用
+					// 注意：这里实际没有从vector中删除节点，只是标记为不存在
 					tr[now].children[bit] = 0;
 				}
 
@@ -4202,6 +3974,29 @@ namespace MyTools
 		// 获取当前Trie中的数字个数
 		int size() {
 			return tr[root].cnt;
+		}
+
+		// 遍历整个字典树进行操作
+		void dfs(int now, int i, T pre) {
+			// 左右子树
+			var to = array<int, 2>{ tr[now].children[0], tr[now].children[1] };
+
+			//【具体问题具体分析】
+
+			// 遍历左右子树
+			if (to[0]) {
+				dfs(to[0], i - 1, pre);
+			}
+			if (to[1]) {
+				dfs(to[1], i - 1, pre + (1ll << i));
+			}
+			if (!to[0] and !to[1]) {
+				// 遍历到底了，当前遍历到的数是 pre
+			}
+		}
+
+		void dfs() {
+			dfs(root, MAX, 0);
 		}
 	};
 
@@ -4306,7 +4101,7 @@ namespace MyTools
 		}
 
 		void insert(const string& word) {
-			int id = 1;
+			int id = 1; // 空字符串
 			prefixs[id]++;
 
 			TrieNode* now = root;
@@ -4484,8 +4279,8 @@ namespace MyTools
 			int e1 = find(find, u);
 			int e2 = find(find, v);
 			if (e1 != e2) {
-				val[now] = w;
-				g[++now].push_back(e1), g[now].push_back(e2); // 建二叉树
+				val[++now] = w;
+				g[now].push_back(e1), g[now].push_back(e2); // 建二叉树
 				s[e1] = now, s[e2] = now;
 				p[e1][0] = now, p[e2][0] = now; // 倍增父节点初始化
 				// 此处可能还需要进行倍增DP初始化：dp[e1/e2][0] = f(val[now]);
@@ -4661,11 +4456,12 @@ namespace MyTools
 					low[u] = min(low[u], low[v]);
 				}
 				else {
+					// 环
 					low[u] = min(low[u], dfn[v]);
 				}
 			}
 
-			// 如果u是边双连通分量的根
+			// 如果 u 是边双连通分量的根
 			if (low[u] == dfn[u]) {
 				bcc_cnt++;
 				vector<int> bcc;
@@ -4685,6 +4481,7 @@ namespace MyTools
 				tarjan(tarjan, i, 0);
 			}
 		}
+		return bccs;
 
 		/* 缩点后建树参考代码，记得留意是否需要去重
 			int nn = bccs.size();
@@ -4711,8 +4508,6 @@ namespace MyTools
 				};
 			dfs(dfs, 1, 0);
 		*/
-
-		return bccs;
 	}
 
 	bool is_bipartite_graph(int n, const vector<vector<int>>& g) {
@@ -4932,19 +4727,8 @@ namespace MyTools
 
 	template<const int N>
 	class Matrix {
-		/**
-		* 矩阵快速幂优化 dp
-		* 
-		*	已推出 dp 转移方程：f[i] = cal(f[i - 1])，该方程只在乎上一维；
-		*	且 n 过大导致 O(n) 过不了时，考虑使用矩阵快速幂优化至 O(logn)。
-		*
-		*	将转移方程构造成矩阵连乘形式，即可套用快速幂：
-		*		ans[i][1, n] = base[n, n] * ans[i - 1][1, n]
-		*
-		*	需要对 答案矩阵 ans 的第一项、系数矩阵 base 进行初始化
-		*/
-
 	public:
+		// 下标从 1 开始
 		array<array<ll, N + 1>, N + 1> mat;
 
 		Matrix() {
@@ -4955,15 +4739,18 @@ namespace MyTools
 
 		Matrix operator* (const Matrix& x) {
 			// 矩阵乘法
+			// 进行：行向量(答案矩阵) = 行向量(答案矩阵) * 矩阵(系数矩阵) 
 			Matrix ret;
-			for (int i = 0; i <= (1 << n) - 1; i++)
-				for (int j = 0; j <= (1 << n) - 1; j++)
-					for (int k = 0; k <= (1 << n) - 1; k++) {
-						ret.mat[i][j] += mat[i][k] * x.mat[k][j];
+			for (int i = 1; i <= N; i++)
+				for (int k = 1; k <= N; k++) {
+					if (mat[i][k] == 0) continue; // 简单剪枝
+					for (int j = 1; j <= N; j++) {
+						ret.mat[i][j] = (ret.mat[i][j] + mat[i][k] * x.mat[k][j] % mod) % mod;
 
 						// 视情况可以进行修改，比如算和上一轮求和最大的:
 						//		ret.mat[i][j] = max(ret.mat[i][j], mat[i][k] + x.mat[k][j]);
 					}
+				}
 			return ret;
 		}
 
@@ -4980,16 +4767,23 @@ namespace MyTools
 			return res;
 		}
 
-	private:
+		void ksm(ll k, Matrix base) {
+			while (k) {
+				if (k & 1)*this = *this * base;
+				base = base * base;
+				k >>= 1;
+			}
+		}
+
 		void init_ans() {
-			// 初始化第一项答案矩阵
+			// 初始化第一项答案矩阵，即行向量
 			// 答案矩阵默认一维，全排在 [1][...]
 
 		}
 
 		void init_base() {
 			// 初始化系数矩阵
-			// 系数矩阵默认二维，注意 mat 赋值时可能需要 i j 互换 
+			// 系数矩阵默认二维（注意 mat 赋值时可能需要 i j 互换）
 
 		}
 	};
@@ -5047,6 +4841,367 @@ namespace MyTools
 		//size_t operator()(const T& val) const {
 		//	return (*this)(std::hash<T>{}(val));
 		//}
+	};
+
+	struct SafeInt {
+		// 防 inv(0) 用
+
+		ll val;
+		int zero_cnt;
+
+		SafeInt() : val(1), zero_cnt(0) {}
+		SafeInt(ll val) : val(val), zero_cnt(0) {}
+
+		void mul(ll x) {
+			x %= mod;
+			if (x == 0)zero_cnt++;
+			else val = val * x % mod;
+		}
+
+		void div(ll x) {
+			x %= mod;
+			if (x == 0)zero_cnt--;
+			else val = val * Math::inv(x, mod) % mod;
+		}
+
+		// 获取真实值
+		ll get() const {
+			if (zero_cnt > 0) return 0;
+			return val;
+		}
+	};
+
+	// N 为值域范围，询问的 [L, R] 就是在值域上询问；MAXN 为最大节点总数
+	// MaxNodes ≈ (初始插入次数 n + 修改操作次数 q) x log(值域范围 N)
+	template <class Info, const ll N, const ll MAXN>
+	class DynamicSegmentTree // 动态开点线段树
+	{ // 下标从 1 开始
+	protected:
+		struct Node {
+			int ls, rs; // 左右子编号，0 说明改节点不存在
+			Info info;  // 维护信息
+			Node() :ls(0), rs(0), info(Info()) {};
+		};
+
+		int _root; // 单根时，通过 _root 进行查询和修改，初值为 0，modify 后会变成 1
+		int tot;   // 节点总数
+		array<Node, MAXN> tr;
+
+		void pushup(int p)
+		{
+			// 动态开点中，子节点可能不存在，需要判断
+			// 如果处理空节点有特殊的加法逻辑，在这里修改
+			Info l_res = tr[p].ls ? tr[tr[p].ls].info : Info();
+			Info r_res = tr[p].rs ? tr[tr[p].rs].info : Info();
+			tr[p].info = l_res + r_res;
+		}
+
+		// 申请新节点
+		int new_node() {
+			++tot;
+			tr[tot] = Node();
+			return tot; // 返回根节点编号
+		}
+
+	public:
+		DynamicSegmentTree() :tot(0), _root(0) {}
+
+		void clear() {
+			tot = _root = 0;
+		}
+
+		void modify(int& p, ll pl, ll pr, ll x, const Info& v)
+		{
+			if (!p)p = new_node(); // 如果 p 不存在，从 p 到叶子节点的整条链会进行动态开点
+
+			if (pl == pr) {
+				tr[p].info.apply(v);
+				return;
+			}
+
+			ll mid = pl + ((pr - pl) >> 1); // 防溢出写法
+			if (x <= mid)modify(tr[p].ls, pl, mid, x, v);
+			else modify(tr[p].rs, mid + 1, pr, x, v);
+			pushup(p);
+		}
+		void modify(ll x, const Info& v)
+		{
+			// 单根修改：只开了一个线段树，根为 _root
+			modify(_root, 1, N, x, v);
+		}
+		void modify(int& p, ll x, const Info& v)
+		{
+			// 多根修改：若开了很多线段树，main 函数中定义了 vector<int> roots(n + 1, 0) 的时候使用
+			modify(p, 1, N, x, v);
+		}
+
+		Info query(const ll& L, const ll& R, int p, ll pl, ll pr)
+		{
+			if (pl > R or pr < L or !p)return Info(); // 空节点，返回空
+			if (L <= pl and pr <= R)return tr[p].info;
+
+			ll mid = pl + ((pr - pl) >> 1); // 防溢出写法
+			return query(L, R, tr[p].ls, pl, mid) + query(L, R, tr[p].rs, mid + 1, pr);
+		}
+		Info query(const ll& L, const ll& R)
+		{
+			// 单根查询：只开了一个线段树，根为 _root
+			return query(L, R, _root, 1, N);
+		}
+		Info query(int p, const ll& L, const ll& R)
+		{
+			// 多根查询：若开了很多线段树，main 函数中定义了 vector<int> roots(n + 1, 0) 的时候使用
+			return query(L, R, p, 1, N);
+		}
+
+		// 之前做的动态开点多棵线段树上二分的代码，仅供参考用
+		//inline int calc(const vector<int>& root) {
+		//	int ans = 0;
+		//	for (int c : root)ans += tr[c].info.sum;
+		//	return ans;
+		//}
+		//inline vector<int> go_to_ls(const vector<int>& root) {
+		//	var res = vector<int>();
+		//	for (int c : root)if (c and tr[c].ls)res.pb(tr[c].ls);
+		//	return res;
+		//}
+		//inline vector<int> go_to_rs(const vector<int>& root) {
+		//	var res = vector<int>();
+		//	for (int c : root)if (c and tr[c].rs)res.pb(tr[c].rs);
+		//	return res;
+		//}
+		//int findl(const ll& L, const ll& R, const vector<int>& p, ll pl, ll pr) {
+		//	int cnt = calc(p);
+		//	if (pl > R or pr < L or cnt == pr - pl + 1)return 0; // 出界或满足条件
+		//	if (cnt == 0)return min(pr, R); // 全空剪枝
+		//	if (pl == pr)return pl; // 不满足条件
+
+		//	ll mid = pl + ((pr - pl) >> 1);
+
+		//	ll resr = findl(L, R, go_to_rs(p), mid + 1, pr);
+		//	if (resr)return resr;
+		//	
+		//	return findl(L, R, go_to_ls(p), pl, mid);
+		//}
+		//int findr(const ll& L, const ll& R, const vector<int>& p, ll pl, ll pr) {
+		//	int cnt = calc(p);
+		//	if (pl > R or pr < L or cnt == pr - pl + 1)return 0; // 出界或满足条件
+		//	if (cnt == 0)return max(pl, L); // 全空剪枝
+		//	if (pl == pr)return pr; // 不满足条件
+
+		//	ll mid = pl + ((pr - pl) >> 1);
+
+		//	ll resl = findr(L, R, go_to_ls(p), pl, mid);
+		//	if (resl)return resl;
+
+		//	return findr(L, R, go_to_rs(p), mid + 1, pr);
+		//}
+		//int findl(const ll& L, const ll& R, const vector<int>& p) {
+		//	return findl(L, R, p, 1, N);
+		//}
+		//int findr(const ll& L, const ll& R, const vector<int>& p) {
+		//	return findr(L, R, p, 1, N);
+		//}
+	};
+	//struct Info {
+	//	Info() {};
+
+	//	// 要维护的值
+	//	void apply(const Info& v) {
+	//		// 如何单点修改
+	//	}
+	//};
+	//Info operator+(const Info& a, const Info& b) {
+	//	Info c;
+	//	return c;
+	//}
+
+
+	class Mo {
+	private:
+		// 下标默认 1-base
+		int n, q, block_size; // 序列长度、询问个数、块大小
+		int L = 1, R = 0; // 莫队维护指针
+	public:
+		struct Query { int l, r, id; };
+		vector<Query> queries;
+
+		Mo(int n, int q) :
+			n(n), q(q), block_size(max(1, (int)(n / sqrt(q)))),
+			queries(q + 1), ans(q + 1) {
+			init();
+		};
+
+		void update_query(int l, int r, int id) {
+			queries[id] = { l, r, id };
+		}
+
+		void sort_query() {
+			sort(all1(queries), [&](const var& a, const var& b)->bool {
+				int block1 = a.l / block_size;
+				int block2 = b.l / block_size;
+
+				// 第一关键字：左端点所在块编号
+				if (block1 != block2)return block1 < block2;
+
+				// 第二关键字：奇偶优化
+				if (block1 % 2 == 1) return a.r < b.r;
+				else return a.r > b.r;
+				});
+		}
+
+		void update_lr(int ql, int qr, int id) {
+			// 先扩大区间，后缩小区间
+			while (L > ql) add(--L); // L左移，区间扩大
+			while (R < qr) add(++R); // R右移，区间扩大
+			while (L < ql) del(L++); // L右移，区间缩小
+			while (R > qr) del(R--); // R左移，区间缩小
+			ans[id] = current_ans;   // 更新答案
+		}
+
+		struct Answer {
+			/* 需自行添加需要维护的变量 */
+		};
+
+		Answer current_ans;
+		vector<Answer> ans;
+
+		/* 需自行修改 add del init 函数，处理相应需要维护的变量及其初始化 */
+
+		void init() {
+
+		}
+
+		// 扩展区间时加入元素
+		void add(int pos) {
+
+		}
+
+		// 缩小区间时删除元素
+		void del(int pos) {
+
+		}
+	};
+
+	class BlockDecomposition {
+	private:
+		// --------------------------------------
+		// [通用] 变量
+		// --------------------------------------
+		int n;                  // 数组总长度
+		int block_size;         // 块的大小 S
+		int num_blocks;         // 块的总数
+		vector<ll> a;           // 原始数组 (下标 1 到 n)
+		vector<int> id;         // id[i] 表示原数组第 i 个元素属于哪个块
+		vector<int> L, R;       // L[b], R[b] 分别表示第 b 个块的左右端点下标
+
+		int get_block_id(int pos) {
+			// 获取原数组第 pos 个元素属于哪个块
+			return (pos - 1) / block_size + 1;
+		}
+		int get_diff_id(int pos) {
+			// 获取原数组第 pos 个元素的块内下标
+			return (pos - 1) % block_size;
+		}
+
+		// --------------------------------------
+		// [具体情况具体分析] 块内维护的附加信息与标记
+		// 本题需要：加法懒标记 + 块内排序数组
+		// --------------------------------------
+		vector<ll> lazy;       // lazy[b] 表示第 b 个块的区间加法标记
+		vector<vector<ll>> sb; // sb[b] (sorted_blocks) 保存第 b 个块排序后的元素
+
+		// --------------------------------------
+		// [具体情况具体分析] 重构某一个块（通常在散块被修改后调用）
+		// 本题需要：将修改后的散块进行重新排序
+		// --------------------------------------
+		void rebuild(int b) {
+			sb[b].clear();
+			fa(i, L[b], R[b])sb[b].pb(a[i]);
+			sort(all(sb[b]));
+		}
+
+	public:
+		// --------------------------------------
+		// [通用] 构造函数，初始化
+		// --------------------------------------
+		BlockDecomposition(const vector<long long>& input) {
+			n = input.size() - 1; // 默认 input 下标从 1 开始
+			a = input;
+			block_size = max(1, (int)sqrt(n));
+			num_blocks = (n - 1) / block_size + 1;
+
+			id.resize(n + 1);
+			L.resize(num_blocks + 1, 0);
+			R.resize(num_blocks + 1, 0);
+
+			// [具体情况具体分析] 对具体分析的变量初始化空间
+			lazy.assign(num_blocks + 1, 0);
+			sb.resize(num_blocks + 1);
+
+			// 计算每个元素的块归属 和 每个块的左右边界
+			fa(i, 1, n) {
+				id[i] = (i - 1) / block_size + 1;
+				if (L[id[i]] == 0) L[id[i]] = i;
+				R[id[i]] = i;
+			}
+
+			// [具体情况具体分析] 初始预处理
+			fa(b, 1, num_blocks)rebuild(b); // 初始时把每个块内部排好序
+		}
+
+		// --------------------------------------
+		// [具体情况具体分析] 区间修改操作，怎么修改具体情况具体分析
+		// 逻辑骨架是通用的：分同块、左散块、右散块、中间整块
+		// --------------------------------------
+		void update(int l, int r, ll x) {
+			int bl = id[l], br = id[r];
+			if (bl == br) {
+				// 在同一个块内
+				fa(i, l, r)a[i] += x;
+				rebuild(bl); // 散块修改完对块进行重构
+			}
+			else {
+				// 左散块
+				fa(i, l, R[bl])a[i] += x;
+				rebuild(bl);
+
+				// 右散块
+				fa(i, L[br], r)a[i] += x;
+				rebuild(br);
+
+				// 中间整块 (打标记，不重构)
+				fa(b, bl + 1, br - 1)lazy[b] += x;
+			}
+		}
+
+		// --------------------------------------
+		// [具体情况具体分析] 区间查询操作，怎么查询具体情况具体分析
+		// 逻辑骨架是通用的：分同块、左散块、右散块、中间整块
+		// --------------------------------------
+		int query(int l, int r, long long x) {
+			int bl = id[l], br = id[r];
+			int res = 0;
+			if (bl == br) {
+				// 在同一个块内，暴力判断
+				fa(i, l, r)if (a[i] + lazy[bl] < x)res++;
+			}
+			else {
+				// 左散块暴力
+				fa(i, l, R[bl])if (a[i] + lazy[bl] < x)res++;
+
+				// 右散块暴力
+				fa(i, L[br], r)if (a[i] + lazy[br] < x)res++;
+
+				// 中间整块：利用预处理的排序数组进行二分查找
+				fa(b, bl + 1, br - 1) {
+					ll tar = x - lazy[b]; // a[i] + lazy[b] < x  ==>  a[i] < x - lazy
+					int cnt = lower_bound(all(sb[b]), tar) - sb[b].begin();
+					res += cnt;
+				}
+			}
+			return res;
+		}
 	};
 }
 #endif
