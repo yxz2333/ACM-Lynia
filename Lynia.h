@@ -5203,5 +5203,119 @@ namespace MyTools
 			return res;
 		}
 	};
+
+	class Pollard_Rho {
+	private:
+		mt19937_64 rnd;
+
+		// 防爆快速幂
+		long long power(long long base, long long exp, long long mod) {
+			long long res = 1;
+			base %= mod;
+			while (exp) {
+				if (exp & 1) res = (long long)((__int128)res * base % mod);
+				base = (long long)((__int128)base * base % mod);
+				exp >>= 1;
+			}
+			return res;
+		}
+
+		// Polong longard-Rho 找单一因子
+		long long pollard_rho(long long n) {
+			if (n % 2 == 0) return 2;
+
+			long long c = rnd() % (n - 1) + 1; // 随机常数 c
+			long long x = 0, y = 0, g = 1;
+			long long val = 1;
+
+			// 采用倍增优化结合累积乘法，极大提升求 gcd 效率
+			for (long long goal = 1; ; goal *= 2, x = y, val = 1) {
+				for (long long step = 1; step <= goal; ++step) {
+					y = (long long)(((__int128)y * y + c) % n);
+					val = (long long)((__int128)val * abs(x - y) % n);
+
+					// 每 127 步做一次 gcd，避免每步 gcd 的巨额常数开销
+					if (step % 127 == 0) {
+						g = std::gcd(val, n);
+						if (g > 1) break;
+					}
+				}
+				g = std::gcd(val, n);
+				if (g > 1) break;
+			}
+
+			// 如果找出来的因子等于 n 本身，说明本次失败，返回 n（外部需要重新换随机数尝试）
+			return g;
+		}
+
+		// 递归质因数分解
+		void factorize(vector<long long>& factors, long long n) {
+			if (n < 2) return;
+
+			// 如果已经是质数了，记录并结束
+			if (is_prime(n)) {
+				factors.push_back(n);
+				return;
+			}
+
+			// 用 Pollard-Rho 找出一个非平凡因子 p
+			long long p = n;
+			while (p >= n) { // 防御性编程：如果 PR 失败返回了 n，就一直重试 (因为 rnd 会产生新随机数)
+				p = pollard_rho(n);
+			}
+
+			// 递归分解找出的因子 p 和剩下的 n/p
+			factorize(factors, p);
+			factorize(factors, n / p);
+		}
+
+	public:
+		Pollard_Rho() :rnd(random_device{}()) {};
+
+		// O(logN) 判断质数
+		bool is_prime(long long n) {
+			if (n < 2) return false;
+			if (n == 2 || n == 3) return true;
+			if (n % 2 == 0) return false;
+
+			// 分解 n-1 = d * 2^s
+			long long d = n - 1;
+			int s = 0;
+			while (d % 2 == 0) {
+				d /= 2;
+				s++;
+			}
+
+			// 64 位整数范围内，这 12 个基底可保 100% 正确
+			long long bases[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37 };
+
+			for (long long a : bases) {
+				if (n == a) return true;
+				if (n % a == 0) return false;
+
+				long long x = power(a, d, n);
+				if (x == 1 || x == n - 1) continue; // 直接通过当前基底的测试
+
+				bool composite = true;
+				// 不要重新计算 power，直接平方
+				for (int r = 1; r < s; r++) {
+					x = (long long)((__int128)x * x % n);
+					if (x == n - 1) {
+						composite = false; // 遇到了 n-1，说明可能为素数，通过测试
+						break;
+					}
+				}
+				if (composite) return false; // 如果全是 composite，肯定是合数
+			}
+			return true;
+		}
+
+		// O(N ^ (1 / 4)) 分解质因数
+		vector<long long> get(long long n) {
+			vector<long long> factors;
+			factorize(factors, n);
+			return factors;
+		}
+	};
 }
 #endif
